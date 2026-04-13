@@ -1,21 +1,437 @@
 {% extends 'toko/base.html' %}
+{% load denim_filters %}
 
 {% block content %}
-<h2 class="text-2xl font-bold mb-6">Produk Denim</h2>
-
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    {% for p in produk %}
-    <div class="bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition">
-        <img src="{{ p.gambar.url }}" class="w-full h-48 object-cover rounded">
-
-        <h3 class="text-lg font-semibold mt-3">{{ p.nama }}</h3>
-        <p class="text-gray-600">Rp {{ p.harga }}</p>
-
-        <a href="{% url 'detail' p.id %}"
-           class="block mt-3 bg-black text-white text-center py-2 rounded hover:bg-gray-800">
-            Lihat Detail
-        </a>
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-denim-900 to-denim-700 text-white rounded-2xl p-8 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div>
+            <p class="text-xl mb-6 text-denim-100">Koleksi denim terbaik dengan kualitas premium. Temukan celana jeans, jaket, dan aksesoris denim favorit Anda.</p>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="#products" class="bg-white text-denim-900 px-6 py-3 rounded-lg font-semibold hover:bg-denim-50 transition-colors">
+                    Lihat Koleksi
+                </a>
+                <a href="{% url 'filter_kategori' 'celana' %}" class="border-2 border-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-denim-900 transition-colors">
+                    Celana Jeans
+                </a>
+            </div>
+        </div>
+        <div class="hidden md:block">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center">
+                <i class="fas fa-tshirt text-6xl mb-4"></i>
+                <p class="text-lg">100% Original Denim</p>
+            </div>
+        </div>
     </div>
-    {% endfor %}
-</div>
+</section>
+
+<!-- Search Bar -->
+<section class="mb-8">
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <form action="{% url 'search' %}" method="GET" class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1 relative">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" name="q" placeholder="Cari produk denim..." 
+                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-denim-500 focus:border-transparent"
+                       value="{{ query|default:'' }}">
+            </div>
+            <button type="submit" class="bg-denim-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-denim-800 transition-colors">
+                <i class="fas fa-search mr-2"></i>Cari
+            </button>
+        </form>
+    </div>
+</section>
+
+<!-- Photography Slider Section -->
+<section class="mb-8">
+    <div class="relative overflow-hidden rounded-2xl shadow-2xl bg-black" style="height: 600px;">
+        <div class="flex transition-transform duration-700 ease-in-out h-full" id="mainSlider">
+            <!-- Image 1 -->
+            <div class="relative w-full flex-shrink-0">
+                <img src="https://i.pinimg.com/originals/2f/33/4c/2f334c9baa2dc7eebafca5e600b1d083.jpg" 
+                     alt="Denim Photography 1" 
+                     class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div class="absolute bottom-8 left-8 text-white">
+                    <h2 class="text-4xl font-bold mb-2">Premium Denim Collection</h2>
+                    <p class="text-lg opacity-90">Kualitas terbaik untuk gaya Anda</p>
+                </div>
+            </div>
+            
+            <!-- Image 2 -->
+            <div class="relative w-full flex-shrink-0">
+                <img src="https://i.pinimg.com/originals/15/97/ed/1597ed7ebbcd4a2abb894e5eb59a0fad.jpg" 
+                     alt="Denim Photography 2" 
+                     class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div class="absolute bottom-8 left-8 text-white">
+                    <h2 class="text-4xl font-bold mb-2">Urban Denim Style</h2>
+                    <p class="text-lg opacity-90">Tampil modern dengan denim berkualitas</p>
+                </div>
+            </div>
+            
+            <!-- Image 3 -->
+            <div class="relative w-full flex-shrink-0">
+                <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80" 
+                     alt="Denim Photography 3" 
+                     class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div class="absolute bottom-8 left-8 text-white">
+                    <h2 class="text-4xl font-bold mb-2">Classic Denim Heritage</h2>
+                    <p class="text-lg opacity-90">Warisan denim yang tak lekang waktu</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Controls -->
+        <button onclick="prevSlide('mainSlider')" 
+                class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 group">
+            <i class="fas fa-chevron-left text-xl group-hover:scale-110 transition-transform"></i>
+        </button>
+        <button onclick="nextSlide('mainSlider')" 
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 group">
+            <i class="fas fa-chevron-right text-xl group-hover:scale-110 transition-transform"></i>
+        </button>
+        
+        <!-- Slide Indicators -->
+        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+            <button onclick="goToSlide('mainSlider', 0)" 
+                    class="w-3 h-3 bg-white/50 rounded-full hover:bg-white transition-colors" id="indicator-0"></button>
+            <button onclick="goToSlide('mainSlider', 1)" 
+                    class="w-3 h-3 bg-white/50 rounded-full hover:bg-white transition-colors" id="indicator-1"></button>
+            <button onclick="goToSlide('mainSlider', 2)" 
+                    class="w-3 h-3 bg-white/50 rounded-full hover:bg-white transition-colors" id="indicator-2"></button>
+        </div>
+    </div>
+</section>
+
+<!-- Best Sellers Section -->
+{% if best_sellers %}
+<section class="mb-12">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-3xl font-bold text-denim-900">
+            <i class="fas fa-fire text-orange-500 mr-2"></i>Best Seller
+        </h2>
+        <a href="#" class="text-denim-600 hover:text-denim-800 transition-colors">Lihat Semua</a>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for p in best_sellers %}
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden group">
+            <div class="relative">
+                {% if p.gambar %}
+                    <img src="{{ p.gambar.url }}" alt="{{ p.nama }}" 
+                         class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
+                {% else %}
+                    <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                        <i class="fas fa-tshirt text-gray-400 text-4xl"></i>
+                    </div>
+                {% endif %}
+                
+                <!-- Badges -->
+                <div class="absolute top-2 left-2 flex flex-col gap-2">
+                    {% if p.is_best_seller %}
+                        <span class="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                            <i class="fas fa-fire mr-1"></i>Best Seller
+                        </span>
+                    {% endif %}
+                    {% if p.diskon > 0 %}
+                        <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                            -{{ p.diskon }}%
+                        </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Stock Badge -->
+                <div class="absolute top-2 right-2">
+                    {% if p.stok > 0 %}
+                        <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                            Stok: {{ p.stok }}
+                        </span>
+                    {% else %}
+                        <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                            Habis
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="p-4">
+                <h3 class="font-semibold text-lg text-denim-900 mb-2 line-clamp-2">{{ p.nama }}</h3>
+                <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ p.deskripsi|truncatewords:10 }}</p>
+                
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        {% if p.diskon > 0 %}
+                            <span class="text-lg font-bold text-denim-900">Rp {{ p.get_harga_setelah_diskon|format_number }}</span>
+                            <span class="text-sm text-gray-400 line-through ml-2">Rp {{ p.harga|format_number }}</span>
+                        {% else %}
+                            <span class="text-lg font-bold text-denim-900">Rp {{ p.harga|format_number }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        {{ p.get_kategori_display }}
+                    </span>
+                </div>
+                
+                <div class="flex gap-2">
+                    <a href="{% url 'detail' p.id %}" 
+                       class="flex-1 bg-denim-900 text-white py-2 rounded-lg hover:bg-denim-800 transition-colors text-center text-sm font-medium">
+                        <i class="fas fa-eye mr-1"></i>Detail
+                    </a>
+                    {% if p.stok > 0 %}
+                        <form action="{% url 'add_to_cart' p.id %}" method="POST" class="hidden" id="cart-form-{{ p.id }}">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                        </form>
+                        <button onclick="addToCart({{ p.id }})" 
+                                class="bg-denim-600 text-white px-3 py-2 rounded-lg hover:bg-denim-700 transition-colors text-sm">
+                            <i class="fas fa-cart-plus"></i>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- All Products Section -->
+<section id="products">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-3xl font-bold text-denim-900">Semua Produk</h2>
+        <div class="flex gap-2">
+            <a href="{% url 'filter_kategori' 'celana' %}" class="bg-denim-100 text-denim-700 px-4 py-2 rounded-lg hover:bg-denim-200 transition-colors text-sm">
+                Celana
+            </a>
+            <a href="{% url 'filter_kategori' 'jaket' %}" class="bg-denim-100 text-denim-700 px-4 py-2 rounded-lg hover:bg-denim-200 transition-colors text-sm">
+                Jaket
+            </a>
+            <a href="{% url 'filter_kategori' 'kaos' %}" class="bg-denim-100 text-denim-700 px-4 py-2 rounded-lg hover:bg-denim-200 transition-colors text-sm">
+                Kaos
+            </a>
+            <a href="{% url 'filter_kategori' 'aksesoris' %}" class="bg-denim-100 text-denim-700 px-4 py-2 rounded-lg hover:bg-denim-200 transition-colors text-sm">
+                Aksesoris
+            </a>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for p in produk %}
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden group">
+            <div class="relative">
+                {% if p.gambar %}
+                    <img src="{{ p.gambar.url }}" alt="{{ p.nama }}" 
+                         class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
+                {% else %}
+                    <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                        <i class="fas fa-tshirt text-gray-400 text-4xl"></i>
+                    </div>
+                {% endif %}
+                
+                <!-- Badges -->
+                <div class="absolute top-2 left-2 flex flex-col gap-2">
+                    {% if p.is_best_seller %}
+                        <span class="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                            <i class="fas fa-fire mr-1"></i>Best Seller
+                        </span>
+                    {% endif %}
+                    {% if p.diskon > 0 %}
+                        <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                            -{{ p.diskon }}%
+                        </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Stock Badge -->
+                <div class="absolute top-2 right-2">
+                    {% if p.stok > 0 %}
+                        <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                            Stok: {{ p.stok }}
+                        </span>
+                    {% else %}
+                        <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                            Habis
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="p-4">
+                <h3 class="font-semibold text-lg text-denim-900 mb-2 line-clamp-2">{{ p.nama }}</h3>
+                <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ p.deskripsi|truncatewords:10 }}</p>
+                
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        {% if p.diskon > 0 %}
+                            <span class="text-lg font-bold text-denim-900">Rp {{ p.get_harga_setelah_diskon|format_number }}</span>
+                            <span class="text-sm text-gray-400 line-through ml-2">Rp {{ p.harga|format_number }}</span>
+                        {% else %}
+                            <span class="text-lg font-bold text-denim-900">Rp {{ p.harga|format_number }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        {{ p.get_kategori_display }}
+                    </span>
+                </div>
+                
+                <div class="flex gap-2">
+                    <a href="{% url 'detail' p.id %}" 
+                       class="flex-1 bg-denim-900 text-white py-2 rounded-lg hover:bg-denim-800 transition-colors text-center text-sm font-medium">
+                        <i class="fas fa-eye mr-1"></i>Detail
+                    </a>
+                    {% if p.stok > 0 %}
+                        <form action="{% url 'add_to_cart' p.id %}" method="POST" class="hidden" id="cart-form-{{ p.id }}">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                        </form>
+                        <button onclick="addToCart({{ p.id }})" 
+                                class="bg-denim-600 text-white px-3 py-2 rounded-lg hover:bg-denim-700 transition-colors text-sm">
+                            <i class="fas fa-cart-plus"></i>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-12">
+            <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500 text-lg">Belum ada produk tersedia</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if produk.has_other_pages %}
+    <div class="flex justify-center mt-8">
+        <div class="flex gap-2">
+            {% if produk.has_previous %}
+                <a href="?page={{ produk.previous_page_number }}" 
+                   class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-denim-50 transition-colors">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            {% endif %}
+            
+            {% for num in produk.paginator.page_range %}
+                {% if produk.number == num %}
+                    <span class="px-4 py-2 bg-denim-900 text-white rounded-lg">{{ num }}</span>
+                {% elif num > produk.number|add:'-3' and num < produk.number|add:'3' %}
+                    <a href="?page={{ num }}" 
+                       class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-denim-50 transition-colors">
+                        {{ num }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+            
+            {% if produk.has_next %}
+                <a href="?page={{ produk.next_page_number }}" 
+                   class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-denim-50 transition-colors">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+<!-- Add to Cart JavaScript -->
+<script>
+function addToCart(productId) {
+    showLoading();
+    
+    const form = document.getElementById(`cart-form-${productId}`);
+    const formData = new FormData(form);
+    
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        if (data.success) {
+            showNotification(data.message, 'success');
+            updateCartCount(data.cart_count);
+        } else {
+            showNotification(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        showNotification('Terjadi kesalahan, silakan coba lagi', 'error');
+    });
+}
+
+// Photography Slider Functions
+let currentSlideIndex = 0;
+const totalSlides = 3;
+let autoSlideInterval;
+
+function prevSlide(sliderId) {
+    currentSlideIndex = currentSlideIndex === 0 ? totalSlides - 1 : currentSlideIndex - 1;
+    updateSlider(sliderId);
+    resetAutoSlide();
+}
+
+function nextSlide(sliderId) {
+    currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+    updateSlider(sliderId);
+    resetAutoSlide();
+}
+
+function goToSlide(sliderId, index) {
+    currentSlideIndex = index;
+    updateSlider(sliderId);
+    resetAutoSlide();
+}
+
+function updateSlider(sliderId) {
+    const slider = document.getElementById(sliderId);
+    if (slider) {
+        slider.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+        
+        // Update indicators
+        for (let i = 0; i < totalSlides; i++) {
+            const indicator = document.getElementById(`indicator-${i}`);
+            if (indicator) {
+                if (i === currentSlideIndex) {
+                    indicator.classList.remove('bg-white/50');
+                    indicator.classList.add('bg-white');
+                } else {
+                    indicator.classList.remove('bg-white');
+                    indicator.classList.add('bg-white/50');
+                }
+            }
+        }
+    }
+}
+
+function startAutoSlide() {
+    autoSlideInterval = setInterval(() => {
+        currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+        updateSlider('mainSlider');
+    }, 4000); // Auto-slide every 4 seconds
+}
+
+function resetAutoSlide() {
+    clearInterval(autoSlideInterval);
+    startAutoSlide();
+}
+
+// Initialize slider and start auto-slide
+document.addEventListener('DOMContentLoaded', function() {
+    updateSlider('mainSlider');
+    startAutoSlide();
+});
+
+// Format number function
+function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+</script>
+
 {% endblock %}

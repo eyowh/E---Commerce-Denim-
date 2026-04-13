@@ -1,22 +1,302 @@
 {% extends 'toko/base.html' %}
+{% load denim_filters %}
 
 {% block content %}
-<div class="bg-white p-6 rounded-xl shadow-md max-w-md mx-auto text-center">
+<!-- Breadcrumb -->
+<nav class="flex items-center gap-2 text-sm text-gray-600 mb-6">
+    <a href="{% url 'home' %}" class="hover:text-denim-900">Home</a>
+    <i class="fas fa-chevron-right text-xs"></i>
+    <span class="text-denim-900">Pembayaran</span>
+</nav>
 
-    <h2 class="text-xl font-bold mb-4">Pembayaran QRIS</h2>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Payment Information -->
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-2xl font-bold text-denim-900">
+                    <i class="fas fa-qrcode mr-2"></i>Pembayaran QRIS
+                </h1>
+                <div class="text-right">
+                    <p class="text-sm text-gray-600">No. Pesanan</p>
+                    <p class="font-semibold text-denim-900">{{ pesanan.id_pesanan }}</p>
+                </div>
+            </div>
 
-    <p class="mb-3">Total: <b>Rp {{ pesanan.total_harga }}</b></p>
+            <!-- Order Status -->
+            <div class="mb-6 p-4 {% if pesanan.status == 'pending' %}bg-yellow-50 border border-yellow-200{% elif pesanan.status == 'dibayar' %}bg-green-50 border border-green-200{% else %}bg-gray-50 border border-gray-200{% endif %} rounded-lg">
+                <div class="flex items-center gap-3">
+                    {% if pesanan.status == 'pending' %}
+                        <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                        <div>
+                            <p class="font-semibold text-yellow-800">Menunggu Pembayaran</p>
+                            <p class="text-sm text-yellow-600">Silakan lakukan pembayaran untuk melanjutkan</p>
+                        </div>
+                    {% elif pesanan.status == 'dibayar' %}
+                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                        <div>
+                            <p class="font-semibold text-green-800">Pembayaran Berhasil</p>
+                            <p class="text-sm text-green-600">Pesanan Anda sedang diproses</p>
+                        </div>
+                    {% else %}
+                        <i class="fas fa-info-circle text-gray-600 text-xl"></i>
+                        <div>
+                            <p class="font-semibold text-gray-800">{{ pesanan.get_status_display }}</p>
+                            <p class="text-sm text-gray-600">Status pesanan Anda</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
 
-    <img src="/media/qris.png" class="mx-auto w-48 mb-4">
+            <!-- QR Code Section -->
+            {% if pesanan.status == 'pending' %}
+            <div class="text-center mb-6">
+                <h3 class="font-semibold text-lg mb-4">Scan QR Code untuk Pembayaran</h3>
+                
+                <!-- QR Code Display -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 inline-block mb-4">
+                    {% if pesanan.qr_code %}
+                        <img src="{{ pesanan.qr_code.url }}" alt="QR Code Pembayaran" 
+                             class="w-64 h-64 mx-auto">
+                    {% else %}
+                        <div class="w-64 h-64 bg-gray-100 flex items-center justify-center">
+                            <div class="text-center">
+                                <i class="fas fa-qrcode text-6xl text-gray-400 mb-2"></i>
+                                <p class="text-gray-500">QR Code akan segera tersedia</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
 
-    <form method="post" enctype="multipart/form-data" class="space-y-3">
-        {% csrf_token %}
-        <input type="file" name="bukti" class="w-full border p-2 rounded">
+                <!-- Payment Details -->
+                <div class="bg-denim-50 rounded-lg p-4 mb-6">
+                    <div class="grid grid-cols-2 gap-4 text-left">
+                        <div>
+                            <p class="text-sm text-gray-600">Nomor Pesanan</p>
+                            <p class="font-semibold">{{ pesanan.id_pesanan }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Total Pembayaran</p>
+                            <p class="font-semibold text-lg text-denim-900">Rp {{ pesanan.total_harga|format_number }}</p>
+                        </div>
+                    </div>
+                </div>
 
-        <button class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
-            Upload Bukti
-        </button>
-    </form>
+                <!-- Instructions -->
+                <div class="bg-blue-50 rounded-lg p-4 mb-6 text-left">
+                    <h4 class="font-semibold text-blue-800 mb-2">
+                        <i class="fas fa-info-circle mr-2"></i>Cara Pembayaran:
+                    </h4>
+                    <ol class="text-sm text-blue-700 space-y-1">
+                        <li>1. Buka aplikasi mobile banking (BCA, Mandiri, BNI, dll)</li>
+                        <li>2. Pilih menu QRIS atau Scan QR Code</li>
+                        <li>3. Arahkan kamera ke QR Code di atas</li>
+                        <li>4. Masukkan nominal pembayaran: Rp {{ pesanan.total_harga|format_number }}</li>
+                        <li>5. Konfirmasi pembayaran</li>
+                    </ol>
+                </div>
 
+                <!-- Upload Proof -->
+                <form method="post" enctype="multipart/form-data" action="{% url 'konfirmasi_pembayaran' pesanan.id_pesanan %}" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Upload Bukti Pembayaran (Opsional)
+                        </label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-denim-500 transition-colors">
+                            <input type="file" name="bukti_bayar" id="bukti_bayar" class="hidden" accept="image/*">
+                            <label for="bukti_bayar" class="cursor-pointer">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-gray-600">Klik untuk upload bukti pembayaran</p>
+                                <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, PDF (Max: 5MB)</p>
+                            </label>
+                        </div>
+                        <div id="file-preview" class="mt-2 hidden">
+                            <img id="preview-image" class="w-32 h-32 object-cover rounded mx-auto">
+                            <p id="file-name" class="text-sm text-gray-600 mt-2"></p>
+                        </div>
+                    </div>
+
+                    <button type="submit" 
+                            class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                        <i class="fas fa-upload mr-2"></i>Upload Bukti Pembayaran
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+
+            <!-- Order Details -->
+            <div class="border-t pt-6">
+                <h3 class="font-semibold text-lg mb-4">Detail Pesanan</h3>
+                <div class="space-y-4">
+                    <!-- Customer Info -->
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-medium mb-2">Informasi Pembeli</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                            <div>
+                                <span class="text-gray-600">Nama:</span>
+                                <span class="font-medium ml-2">{{ pesanan.nama_pembeli }}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">Telepon:</span>
+                                <span class="font-medium ml-2">{{ pesanan.no_telepon|default:'-' }}</span>
+                            </div>
+                            <div class="md:col-span-2">
+                                <span class="text-gray-600">Alamat:</span>
+                                <span class="font-medium ml-2">{{ pesanan.alamat }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Items -->
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-medium mb-2">Item Pesanan</h4>
+                        {% for item in pesanan.items.all %}
+                        <div class="flex items-center justify-between py-2 border-b last:border-0">
+                            <div class="flex items-center gap-3">
+                                {% if item.produk.gambar %}
+                                    <img src="{{ item.produk.gambar.url }}" alt="{{ item.produk.nama }}" 
+                                         class="w-12 h-12 object-cover rounded">
+                                {% else %}
+                                    <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                                        <i class="fas fa-tshirt text-gray-400 text-sm"></i>
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <p class="font-medium">{{ item.produk.nama }}</p>
+                                    <p class="text-sm text-gray-500">{{ item.jumlah }} x Rp {{ item.harga_satuan|format_number }}</p>
+                                </div>
+                            </div>
+                            <span class="font-semibold">Rp {{ item.get_total_harga|format_number }}</span>
+                        </div>
+                        {% endfor %}
+                        
+                        <!-- Total -->
+                        <div class="pt-2 mt-2 border-t">
+                            <div class="flex justify-between font-semibold text-lg">
+                                <span>Total:</span>
+                                <span class="text-denim-900">Rp {{ pesanan.total_harga|format_number }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-4 mt-6">
+                <a href="{% url 'home' %}" 
+                   class="bg-gray-200 text-denim-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-center">
+                    <i class="fas fa-home mr-2"></i>Kembali ke Beranda
+                </a>
+                {% if pesanan.status == 'dibayar' %}
+                <a href="#" class="flex-1 bg-denim-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-denim-800 transition-colors text-center">
+                    <i class="fas fa-truck mr-2"></i>Lacak Pengiriman
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Timer -->
+    {% if pesanan.status == 'pending' %}
+    <div class="lg:col-span-1">
+        <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+            <div class="text-center">
+                <h3 class="font-semibold text-lg mb-4">Batas Waktu Pembayaran</h3>
+                
+                <!-- Timer Display -->
+                <div class="bg-red-50 rounded-lg p-4 mb-4">
+                    <div class="text-3xl font-bold text-red-600 mb-2" id="payment-timer">
+                        23:59:59
+                    </div>
+                    <p class="text-sm text-red-600">Sisa waktu untuk pembayaran</p>
+                </div>
+
+                <!-- Important Notes -->
+                <div class="bg-yellow-50 rounded-lg p-4 mb-4 text-left">
+                    <h4 class="font-semibold text-yellow-800 mb-2">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Penting:
+                    </h4>
+                    <ul class="text-sm text-yellow-700 space-y-1">
+                        <li> Pembayaran harus diselesaikan dalam 24 jam</li>
+                        <li> Pesanan akan otomatis dibatalkan jika melebihi batas waktu</li>
+                        <li> Pastikan nominal pembayaran sesuai</li>
+                        <li> Simpan bukti pembayaran untuk arsip</li>
+                    </ul>
+                </div>
+
+                <!-- Help Section -->
+                <div class="text-left">
+                    <h4 class="font-semibold mb-3">Butuh Bantuan?</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-phone text-denim-600"></i>
+                            <span>+62 812-3456-7890</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-envelope text-denim-600"></i>
+                            <span>info@denimstore.com</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-comments text-denim-600"></i>
+                            <span>Live Chat (Senin-Jumat, 09:00-17:00)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timer JavaScript -->
+    <script>
+        // Set payment deadline (24 hours from now)
+        const deadline = new Date();
+        deadline.setHours(deadline.getHours() + 24);
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = deadline - now;
+
+            if (diff <= 0) {
+                document.getElementById('payment-timer').textContent = 'Waktu Habis';
+                return;
+            }
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('payment-timer').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update timer every second
+        setInterval(updateTimer, 1000);
+        updateTimer(); // Initial call
+    </script>
+    {% endif %}
 </div>
+
+<!-- File Upload Preview Script -->
+<script>
+document.getElementById('bukti_bayar').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('file-preview');
+    const previewImage = document.getElementById('preview-image');
+    const fileName = document.getElementById('file-name');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            fileName.textContent = file.name;
+            preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.classList.add('hidden');
+    }
+});
+</script>
+
 {% endblock %}

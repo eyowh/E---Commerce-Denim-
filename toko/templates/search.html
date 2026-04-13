@@ -1,0 +1,219 @@
+{% extends 'toko/base.html' %}
+{% load denim_filters %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="flex items-center gap-2 text-sm text-gray-600 mb-6">
+    <a href="{% url 'home' %}" class="hover:text-denim-900">Home</a>
+    <i class="fas fa-chevron-right text-xs"></i>
+    <span class="text-denim-900">Hasil Pencarian</span>
+</nav>
+
+<div class="bg-white rounded-2xl shadow-lg p-6">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-denim-900">
+            <i class="fas fa-search mr-2"></i>Hasil Pencarian
+        </h1>
+        {% if query %}
+            <p class="text-gray-600">
+                Menampilkan {{ produk|length }} hasil untuk "<span class="font-semibold">{{ query }}</span>"
+            </p>
+        {% endif %}
+    </div>
+
+    <!-- Search Form -->
+    <div class="mb-6">
+        <form action="{% url 'search' %}" method="GET" class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1 relative">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" name="q" placeholder="Cari produk denim..." 
+                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-denim-500 focus:border-transparent"
+                       value="{{ query }}">
+            </div>
+            <button type="submit" class="bg-denim-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-denim-800 transition-colors">
+                <i class="fas fa-search mr-2"></i>Cari
+            </button>
+        </form>
+    </div>
+
+    <!-- Search Results -->
+    {% if produk %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for p in produk %}
+            <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden group border border-gray-100">
+                <div class="relative">
+                    {% if p.gambar %}
+                        <img src="{{ p.gambar.url }}" alt="{{ p.nama }}" 
+                             class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
+                    {% else %}
+                        <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                            <i class="fas fa-tshirt text-gray-400 text-4xl"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Badges -->
+                    <div class="absolute top-2 left-2 flex flex-col gap-2">
+                        {% if p.is_best_seller %}
+                            <span class="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                <i class="fas fa-fire mr-1"></i>Best Seller
+                            </span>
+                        {% endif %}
+                        {% if p.diskon > 0 %}
+                            <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                -{{ p.diskon }}%
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Stock Badge -->
+                    <div class="absolute top-2 right-2">
+                        {% if p.stok > 0 %}
+                            <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                Stok: {{ p.stok }}
+                            </span>
+                        {% else %}
+                            <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                Habis
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg text-denim-900 mb-2 line-clamp-2">{{ p.nama }}</h3>
+                    <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ p.deskripsi|truncatewords:10 }}</p>
+                    
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            {% if p.diskon > 0 %}
+                                <span class="text-lg font-bold text-denim-900">Rp {{ p.get_harga_setelah_diskon|format_number }}</span>
+                                <span class="text-sm text-gray-400 line-through ml-2">Rp {{ p.harga|format_number }}</span>
+                            {% else %}
+                                <span class="text-lg font-bold text-denim-900">Rp {{ p.harga|format_number }}</span>
+                            {% endif %}
+                        </div>
+                        <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                            {{ p.get_kategori_display }}
+                        </span>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <a href="{% url 'detail' p.id %}" 
+                           class="flex-1 bg-denim-900 text-white py-2 rounded-lg hover:bg-denim-800 transition-colors text-center text-sm font-medium">
+                            <i class="fas fa-eye mr-1"></i>Detail
+                        </a>
+                        {% if p.stok > 0 %}
+                            <form action="{% url 'add_to_cart' p.id %}" method="POST" class="hidden" id="cart-form-{{ p.id }}">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                            </form>
+                            <button data-product-id="{{ p.id }}" onclick="addToCart(this.dataset.productId)" 
+                                    class="bg-denim-600 text-white px-3 py-2 rounded-lg hover:bg-denim-700 transition-colors text-sm add-to-cart-btn">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if produk.has_other_pages %}
+        <div class="flex justify-center mt-8">
+            <div class="flex gap-2">
+                {% if produk.has_previous %}
+                    <a href="?q={{ query }}&page={{ produk.previous_page_number }}" 
+                       class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-denim-50 transition-colors">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                {% endif %}
+                
+                {% for num in produk.paginator.page_range %}
+                    {% if produk.number == num %}
+                        <span class="px-4 py-2 bg-denim-900 text-white rounded-lg">{{ num }}</span>
+                    {% elif num > produk.number|add:'-3' and num < produk.number|add:'3' %}
+                        <a href="?q={{ query }}&page={{ num }}" 
+                           class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-denim-50 transition-colors">
+                            {{ num }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if produk.has_next %}
+                    <a href="?q={{ query }}&page={{ produk.next_page_number }}" 
+                       class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-denim-50 transition-colors">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+    {% else %}
+        <!-- No Results -->
+        <div class="text-center py-12">
+            <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">
+                {% if query %}
+                    Tidak ada hasil untuk "{{ query }}"
+                {% else %}
+                    Masukkan kata kunci pencarian
+                {% endif %}
+            </h3>
+            <p class="text-gray-500 mb-6">
+                {% if query %}
+                    Coba gunakan kata kunci yang berbeda atau lihat produk kami yang lain
+                {% else %}
+                    Gunakan form pencarian di atas untuk menemukan produk yang Anda cari
+                {% endif %}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                {% if query %}
+                    <a href="{% url 'search' %}" 
+                       class="bg-gray-200 text-denim-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
+                        <i class="fas fa-redo mr-2"></i>Reset Pencarian
+                    </a>
+                {% endif %}
+                <a href="{% url 'home' %}" 
+                   class="bg-denim-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-denim-800 transition-colors">
+                    <i class="fas fa-home mr-2"></i>Lihat Semua Produk
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Add to Cart JavaScript -->
+<script>
+function addToCart(productId) {
+    showLoading();
+    
+    const form = document.getElementById(`cart-form-${productId}`);
+    const formData = new FormData(form);
+    
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        if (data.success) {
+            showNotification(data.message, 'success');
+            updateCartCount(data.cart_count);
+        } else {
+            showNotification(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        showNotification('Terjadi kesalahan, silakan coba lagi', 'error');
+    });
+}
+</script>
+
+{% endblock %}

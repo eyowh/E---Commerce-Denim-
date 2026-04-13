@@ -1,19 +1,325 @@
 {% extends 'toko/base.html' %}
+{% load denim_filters %}
 
 {% block content %}
-<div class="bg-white p-6 rounded-xl shadow-md">
+<!-- Breadcrumb -->
+<nav class="flex items-center gap-2 text-sm text-gray-600 mb-6">
+    <a href="{% url 'home' %}" class="hover:text-denim-900">Home</a>
+    <i class="fas fa-chevron-right text-xs"></i>
+    <a href="{% url 'filter_kategori' produk.kategori %}" class="hover:text-denim-900">{{ produk.get_kategori_display }}</a>
+    <i class="fas fa-chevron-right text-xs"></i>
+    <span class="text-denim-900">{{ produk.nama }}</span>
+</nav>
 
-    <img src="{{ produk.gambar.url }}" class="w-full h-80 object-cover rounded">
+<!-- Product Detail -->
+<div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Product Images -->
+        <div class="p-6">
+            <div class="aspect-square bg-gray-100 rounded-xl overflow-hidden mb-4">
+                {% if produk.gambar %}
+                    <img src="{{ produk.gambar.url }}" alt="{{ produk.nama }}" 
+                         class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                {% else %}
+                    <div class="w-full h-full flex items-center justify-center">
+                        <i class="fas fa-tshirt text-gray-400 text-6xl"></i>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Thumbnail Gallery -->
+            <div class="grid grid-cols-4 gap-2">
+                {% if produk.gambar %}
+                    <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer hover:ring-2 hover:ring-denim-500">
+                        <img src="{{ produk.gambar.url }}" alt="{{ produk.nama }}" class="w-full h-full object-cover">
+                    </div>
+                    <!-- Placeholder thumbnails -->
+                    {% for i in "123" %}
+                    <div class="aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-image text-gray-400"></i>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
 
-    <h2 class="text-2xl font-bold mt-4">{{ produk.nama }}</h2>
-    <p class="text-gray-600 mt-2">{{ produk.deskripsi }}</p>
+        <!-- Product Info -->
+        <div class="p-6">
+            <!-- Badges -->
+            <div class="flex gap-2 mb-4">
+                {% if produk.is_best_seller %}
+                    <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        <i class="fas fa-fire mr-1"></i>Best Seller
+                    </span>
+                {% endif %}
+                {% if produk.diskon > 0 %}
+                    <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        -{{ produk.diskon }}%
+                    </span>
+                {% endif %}
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                    {{ produk.get_kategori_display }}
+                </span>
+            </div>
 
-    <p class="text-xl font-semibold mt-4">Rp {{ produk.harga }}</p>
+            <!-- Product Name -->
+            <h1 class="text-3xl font-bold text-denim-900 mb-4">{{ produk.nama }}</h1>
 
-    <a href="{% url 'checkout' produk.id %}"
-       class="mt-4 inline-block bg-black text-white px-6 py-2 rounded hover:bg-gray-800">
-       Beli Sekarang
-    </a>
+            <!-- Product Description -->
+            <p class="text-gray-600 mb-6 leading-relaxed">{{ produk.deskripsi }}</p>
 
+            <!-- Price -->
+            <div class="mb-6">
+                {% if produk.diskon > 0 %}
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl font-bold text-denim-900">Rp {{ produk.get_harga_setelah_diskon|format_number }}</span>
+                        <span class="text-xl text-gray-400 line-through">Rp {{ produk.harga|format_number }}</span>
+                        <span class="bg-red-100 text-red-600 px-2 py-1 rounded text-sm font-semibold">
+                            Hemat {{ produk.diskon }}%
+                        </span>
+                    </div>
+                {% else %}
+                    <span class="text-3xl font-bold text-denim-900">Rp {{ produk.harga|format_number }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Stock Status -->
+            <div class="mb-6">
+                {% if produk.stok > 0 %}
+                    <div class="flex items-center gap-2 text-green-600">
+                        <i class="fas fa-check-circle"></i>
+                        <span class="font-medium">Stok tersedia: {{ produk.stok }} pcs</span>
+                    </div>
+                {% else %}
+                    <div class="flex items-center gap-2 text-red-600">
+                        <i class="fas fa-times-circle"></i>
+                        <span class="font-medium">Stok habis</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Add to Cart Form -->
+            {% if produk.stok > 0 %}
+            <form id="add-to-cart-form" class="mb-6">
+                {% csrf_token %}
+                <div class="flex items-center gap-4 mb-4">
+                    <label class="text-gray-700 font-medium">Jumlah:</label>
+                    <div class="flex items-center border border-gray-300 rounded-lg">
+                        <button type="button" onclick="decreaseQuantity()" 
+                                class="px-3 py-2 hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ produk.stok }}" 
+                               class="w-16 text-center border-0 focus:outline-none">
+                        <button type="button" onclick="increaseQuantity()" 
+                                class="px-3 py-2 hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="submit" 
+                            class="flex-1 bg-denim-900 text-white py-3 rounded-lg font-semibold hover:bg-denim-800 transition-colors">
+                        <i class="fas fa-cart-plus mr-2"></i>Tambah ke Keranjang
+                    </button>
+                    <a href="{% url 'checkout' %}" 
+                       class="bg-denim-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-denim-600 transition-colors">
+                        <i class="fas fa-bolt mr-2"></i>Beli Langsung
+                    </a>
+                </div>
+            </form>
+            {% else %}
+            <button disabled 
+                    class="w-full bg-gray-300 text-gray-500 py-3 rounded-lg font-semibold cursor-not-allowed">
+                <i class="fas fa-times-circle mr-2"></i>Stok Habis
+            </button>
+            {% endif %}
+
+            <!-- Product Details -->
+            <div class="border-t pt-6">
+                <h3 class="font-semibold text-lg mb-4">Detail Produk</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-gray-600">Kategori</span>
+                        <span class="font-medium">{{ produk.get_kategori_display }}</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-gray-600">Stok</span>
+                        <span class="font-medium">{{ produk.stok }} pcs</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-gray-600">Berat</span>
+                        <span class="font-medium">~500 gr</span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <span class="text-gray-600">SKU</span>
+                        <span class="font-medium">DENIM-{{ produk.id|stringformat:"06d" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Info -->
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                <div class="flex items-center gap-2 text-blue-700">
+                    <i class="fas fa-truck"></i>
+                    <span class="font-medium">Pengiriman 2-4 hari kerja</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Related Products -->
+{% if related_products %}
+<section class="mt-12">
+    <h2 class="text-2xl font-bold text-denim-900 mb-6">Produk Terkait</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for p in related_products %}
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden group">
+            <div class="relative">
+                {% if p.gambar %}
+                    <img src="{{ p.gambar.url }}" alt="{{ p.nama }}" 
+                         class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
+                {% else %}
+                    <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                        <i class="fas fa-tshirt text-gray-400 text-4xl"></i>
+                    </div>
+                {% endif %}
+                
+                {% if p.is_best_seller %}
+                <div class="absolute top-2 left-2">
+                    <span class="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        <i class="fas fa-fire mr-1"></i>Best Seller
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="p-4">
+                <h3 class="font-semibold text-lg text-denim-900 mb-2 line-clamp-2">{{ p.nama }}</h3>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-lg font-bold text-denim-900">Rp {{ p.get_harga_setelah_diskon|format_number }}</span>
+                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        {{ p.get_kategori_display }}
+                    </span>
+                </div>
+                
+                <div class="flex gap-2">
+                    <a href="{% url 'detail' p.id %}" 
+                       class="flex-1 bg-denim-900 text-white py-2 rounded-lg hover:bg-denim-800 transition-colors text-center text-sm font-medium">
+                        <i class="fas fa-eye mr-1"></i>Detail
+                    </a>
+                    {% if p.stok > 0 %}
+                    <button data-product-id="{{ p.id }}" 
+                            class="bg-denim-600 text-white px-3 py-2 rounded-lg hover:bg-denim-700 transition-colors text-sm add-to-cart-btn">
+                        <i class="fas fa-cart-plus"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- JavaScript -->
+<script>
+// Quantity controls
+function decreaseQuantity() {
+    const input = document.getElementById('quantity');
+    if (input.value > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+
+function increaseQuantity() {
+    const input = document.getElementById('quantity');
+    const max = input.getAttribute('max');
+    if (input.value < max) {
+        input.value = parseInt(input.value) + 1;
+    }
+}
+
+// Add to cart form submission
+document.getElementById('add-to-cart-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    showLoading();
+    
+    const formData = new FormData(this);
+    const productId = {{ produk.id }};
+    
+    fetch(`/add-to-cart/${productId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        if (data.success) {
+            showNotification(data.message, 'success');
+            updateCartCount(data.cart_count);
+            // Reset quantity
+            document.getElementById('quantity').value = 1;
+        } else {
+            showNotification(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        showNotification('Terjadi kesalahan, silakan coba lagi', 'error');
+    });
+});
+
+// Add to cart for related products
+document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        showLoading();
+        
+        fetch(`/add-to-cart/${productId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({quantity: 1})
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            if (data.success) {
+                showNotification(data.message, 'success');
+                updateCartCount(data.cart_count);
+            } else {
+                showNotification(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            hideLoading();
+            showNotification('Terjadi kesalahan, silakan coba lagi', 'error');
+        });
+    });
+});
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
 {% endblock %}
