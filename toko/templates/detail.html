@@ -1,0 +1,19 @@
+{% extends 'toko/base.html' %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-xl shadow-md">
+
+    <img src="{{ produk.gambar.url }}" class="w-full h-80 object-cover rounded">
+
+    <h2 class="text-2xl font-bold mt-4">{{ produk.nama }}</h2>
+    <p class="text-gray-600 mt-2">{{ produk.deskripsi }}</p>
+
+    <p class="text-xl font-semibold mt-4">Rp {{ produk.harga }}</p>
+
+    <a href="{% url 'checkout' produk.id %}"
+       class="mt-4 inline-block bg-black text-white px-6 py-2 rounded hover:bg-gray-800">
+       Beli Sekarang
+    </a>
+
+</div>
+{% endblock %}

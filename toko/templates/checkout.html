@@ -1,0 +1,26 @@
+{% extends 'toko/base.html' %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-xl shadow-md max-w-md mx-auto">
+
+    <h2 class="text-xl font-bold mb-4">Checkout</h2>
+
+    <form method="post" class="space-y-3">
+        {% csrf_token %}
+
+        <input type="text" name="nama" placeholder="Nama"
+               class="w-full border p-2 rounded">
+
+        <textarea name="alamat" placeholder="Alamat"
+                  class="w-full border p-2 rounded"></textarea>
+
+        <input type="number" name="jumlah" placeholder="Jumlah"
+               class="w-full border p-2 rounded">
+
+        <button class="w-full bg-black text-white py-2 rounded hover:bg-gray-800">
+            Pesan
+        </button>
+    </form>
+
+</div>
+{% endblock %}
