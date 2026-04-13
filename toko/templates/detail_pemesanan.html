@@ -1,0 +1,19 @@
+<div class="container">
+    <h2>Detail Pesanan</h2>
+
+    <p>Status: <b>{{ order.get_status_display }}</b></p>
+    <p>Total: Rp {{ order.total }}</p>
+
+    {% if order.bukti_pembayaran %}
+        <p>Bukti:</p>
+        <img src="{{ order.bukti_pembayaran.url }}" width="200">
+    {% endif %}
+
+    {% if order.resi %}
+        <p>Resi: {{ order.resi }}</p>
+    {% endif %}
+
+    {% if order.status == 'dikirim' %}
+        <a href="{% url 'pesanan_selesai' order.id %}">Pesanan Diterima</a>
+    {% endif %}
+</div>
