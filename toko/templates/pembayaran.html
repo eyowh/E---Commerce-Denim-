@@ -15,7 +15,11 @@
         <div class="bg-white rounded-2xl shadow-lg p-6">
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-2xl font-bold text-denim-900">
-                    <i class="fas fa-qrcode mr-2"></i>Pembayaran QRIS
+                    {% if pesanan.metode_pembayaran == 'qris' %}
+                        <i class="fas fa-qrcode mr-2"></i>Pembayaran QRIS
+                    {% elif pesanan.metode_pembayaran == 'transfer' %}
+                        <i class="fas fa-university mr-2"></i>Transfer Bank
+                    {% endif %}
                 </h1>
                 <div class="text-right">
                     <p class="text-sm text-gray-600">No. Pesanan</p>
@@ -50,6 +54,7 @@
 
             <!-- QR Code Section -->
             {% if pesanan.status == 'pending' %}
+            {% if pesanan.metode_pembayaran == 'qris' %}
             <div class="text-center mb-6">
                 <h3 class="font-semibold text-lg mb-4">Scan QR Code untuk Pembayaran</h3>
                 
@@ -77,7 +82,7 @@
                         </div>
                         <div>
                             <p class="text-sm text-gray-600">Total Pembayaran</p>
-                            <p class="font-semibold text-lg text-denim-900">Rp {{ pesanan.total_harga|format_number }}</p>
+                            <p class="font-semibold text-lg text-denim-900">{{ pesanan.total_harga|format_currency }}</p>
                         </div>
                     </div>
                 </div>
@@ -91,10 +96,71 @@
                         <li>1. Buka aplikasi mobile banking (BCA, Mandiri, BNI, dll)</li>
                         <li>2. Pilih menu QRIS atau Scan QR Code</li>
                         <li>3. Arahkan kamera ke QR Code di atas</li>
-                        <li>4. Masukkan nominal pembayaran: Rp {{ pesanan.total_harga|format_number }}</li>
+                        <li>4. Masukkan nominal pembayaran: {{ pesanan.total_harga|format_currency }}</li>
                         <li>5. Konfirmasi pembayaran</li>
                     </ol>
                 </div>
+            {% elif pesanan.metode_pembayaran == 'transfer' %}
+            <div class="text-center mb-6">
+                <h3 class="font-semibold text-lg mb-4">Transfer Bank</h3>
+                
+                <!-- Bank Account Display -->
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 inline-block mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-university text-6xl text-denim-600 mb-4"></i>
+                        <h4 class="font-semibold text-lg mb-2">Rekening Tujuan</h4>
+                        <div class="bg-denim-50 rounded-lg p-4 mb-4">
+                            <p class="text-sm text-gray-600 mb-1">Nomor Rekening</p>
+                            <p class="text-2xl font-bold text-denim-900 mb-2">9011 6154 4000</p>
+                            <p class="text-sm text-gray-600 mb-1">Atas Nama</p>
+                            <p class="font-semibold">Catty Denim</p>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-3">
+                            <p class="text-sm text-green-700">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                Transfer ke rekening ini untuk menyelesaikan pembayaran
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Details -->
+                <div class="bg-denim-50 rounded-lg p-4 mb-6">
+                    <div class="grid grid-cols-2 gap-4 text-left">
+                        <div>
+                            <p class="text-sm text-gray-600">Nomor Pesanan</p>
+                            <p class="font-semibold">{{ pesanan.id_pesanan }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Total Pembayaran</p>
+                            <p class="font-semibold text-lg text-denim-900">{{ pesanan.total_harga|format_currency }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructions -->
+                <div class="bg-blue-50 rounded-lg p-4 mb-6 text-left">
+                    <h4 class="font-semibold text-blue-800 mb-2">
+                        <i class="fas fa-info-circle mr-2"></i>Cara Pembayaran:
+                    </h4>
+                    <ol class="text-sm text-blue-700 space-y-1">
+                        <li>1. Buka aplikasi mobile banking atau ATM</li>
+                        <li>2. Pilih menu Transfer</li>
+                        <li>3. Masukkan nomor rekening: <span class="font-bold">9011 6154 4000</span></li>
+                        <li>4. Masukkan nominal pembayaran: {{ pesanan.total_harga|format_currency }}</li>
+                        <li>5. Konfirmasi pembayaran</li>
+                        <li>6. Simpan bukti transfer untuk konfirmasi</li>
+                    </ol>
+                </div>
+
+                <!-- Copy Account Number -->
+                <div class="bg-yellow-50 rounded-lg p-4 mb-6">
+                    <button onclick="copyAccountNumber()" class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors">
+                        <i class="fas fa-copy mr-2"></i>Salin Nomor Rekening
+                    </button>
+                    <p class="text-sm text-yellow-700 mt-2">Klik untuk menyalin nomor rekening ke clipboard</p>
+                </div>
+            {% endif %}
 
                 <!-- Upload Proof -->
                 <form method="post" enctype="multipart/form-data" action="{% url 'konfirmasi_pembayaran' pesanan.id_pesanan %}" class="space-y-4">
@@ -164,10 +230,10 @@
                                 {% endif %}
                                 <div>
                                     <p class="font-medium">{{ item.produk.nama }}</p>
-                                    <p class="text-sm text-gray-500">{{ item.jumlah }} x Rp {{ item.harga_satuan|format_number }}</p>
+                                    <p class="text-sm text-gray-500">{{ item.jumlah }} x {{ item.harga_satuan|format_currency }}</p>
                                 </div>
                             </div>
-                            <span class="font-semibold">Rp {{ item.get_total_harga|format_number }}</span>
+                            <span class="font-semibold">{{ item.get_total_harga|format_currency }}</span>
                         </div>
                         {% endfor %}
                         
@@ -175,7 +241,7 @@
                         <div class="pt-2 mt-2 border-t">
                             <div class="flex justify-between font-semibold text-lg">
                                 <span>Total:</span>
-                                <span class="text-denim-900">Rp {{ pesanan.total_harga|format_number }}</span>
+                                <span class="text-denim-900">{{ pesanan.total_harga|format_currency }}</span>
                             </div>
                         </div>
                     </div>
@@ -297,6 +363,44 @@ document.getElementById('bukti_bayar').addEventListener('change', function(e) {
         preview.classList.add('hidden');
     }
 });
+
+// Copy Account Number Function
+function copyAccountNumber() {
+    const accountNumber = '9011 6154 4000';
+    
+    // Try to use modern clipboard API first
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(accountNumber).then(function() {
+            showNotification('Nomor rekening berhasil disalin!', 'success');
+        }).catch(function(err) {
+            // Fallback method
+            fallbackCopyTextToClipboard(accountNumber);
+        });
+    } else {
+        // Fallback for older browsers
+        fallbackCopyTextToClipboard(accountNumber);
+    }
+}
+
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showNotification('Nomor rekening berhasil disalin!', 'success');
+    } catch (err) {
+        showNotification('Gagal menyalin nomor rekening', 'error');
+    }
+    
+    document.body.removeChild(textArea);
+}
 </script>
 
 {% endblock %}

@@ -1,0 +1,174 @@
+{% extends 'toko/base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Profile Header -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+            <div class="bg-gradient-to-r from-denim-900 to-denim-700 h-32"></div>
+            <div class="px-8 pb-8">
+                <div class="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-8 space-y-4 sm:space-y-0 sm:space-x-6">
+                    <!-- Profile Picture -->
+                    <div class="relative">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}?t={{ timestamp|default:'0' }}" alt="Profile" 
+                                 class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+                        {% else %}
+                            <div class="w-32 h-32 rounded-full border-4 border-white shadow-lg bg-denim-100 flex items-center justify-center">
+                                <i class="fas fa-user text-denim-900 text-4xl"></i>
+                            </div>
+                        {% endif %}
+                        <div class="absolute bottom-0 right-0 bg-denim-900 text-white rounded-full p-2 shadow-lg">
+                            <i class="fas fa-camera text-sm"></i>
+                        </div>
+                    </div>
+
+                    <!-- User Info -->
+                    <div class="flex-1 text-center sm:text-left">
+                        <h1 class="text-3xl font-bold text-denim-900">{{ user.first_name|default:user.username }}</h1>
+                        <p class="text-gray-600 mt-1">@{{ user.username }}</p>
+                        {% if profile.bio %}
+                            <p class="text-gray-700 mt-2">{{ profile.bio }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Edit Profile Button -->
+                    <div>
+                        <a href="{% url 'edit_profile' %}" 
+                           class="bg-denim-900 text-white px-6 py-3 rounded-lg hover:bg-denim-800 transition-colors inline-flex items-center">
+                            <i class="fas fa-edit mr-2"></i>Edit Profil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Details -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Contact Information -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-denim-900 mb-6 flex items-center">
+                        <i class="fas fa-address-card mr-2 text-denim-600"></i>
+                        Informasi Kontak
+                    </h2>
+                    
+                    {% if is_new_profile %}
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-start">
+                            <i class="fas fa-info-circle text-blue-600 mt-0.5 mr-3"></i>
+                            <div>
+                                <p class="text-blue-800 font-medium">Profil Anda belum lengkap!</p>
+                                <p class="text-blue-700 text-sm mt-1">Lengkapi profil Anda untuk pengalaman berbelanja yang lebih baik.</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-envelope text-gray-400 mt-1"></i>
+                            <div>
+                                <p class="text-sm text-gray-500">Email</p>
+                                <p class="font-medium">{{ user.email|default:'Belum diisi' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-phone text-gray-400 mt-1"></i>
+                            <div>
+                                <p class="text-sm text-gray-500">Telepon</p>
+                                <p class="font-medium">{{ profile.phone_number|default:'Belum diisi' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-home text-gray-400 mt-1"></i>
+                            <div>
+                                <p class="text-sm text-gray-500">Alamat</p>
+                                <p class="font-medium">{{ profile.address|default:'Belum diisi' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Stats -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mt-6">
+                    <h2 class="text-xl font-bold text-denim-900 mb-6 flex items-center">
+                        <i class="fas fa-chart-bar mr-2 text-denim-600"></i>
+                        Statistik Akun
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Total Pesanan</span>
+                            <span class="font-bold text-denim-900">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Member Sejak</span>
+                            <span class="font-bold text-denim-900">{{ user.date_joined|date:"d M Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-denim-900 mb-6 flex items-center">
+                        <i class="fas fa-shopping-bag mr-2 text-denim-600"></i>
+                        Pesanan Terbaru
+                    </h2>
+                    
+                    <!-- Empty State -->
+                    <div class="text-center py-12">
+                        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-box text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Belum Ada Pesanan</h3>
+                        <p class="text-gray-600 mb-6">Anda belum memiliki pesanan. Mulai belanja sekarang!</p>
+                        <a href="{% url 'home' %}" 
+                           class="bg-denim-900 text-white px-6 py-3 rounded-lg hover:bg-denim-800 transition-colors inline-flex items-center">
+                            <i class="fas fa-shopping-cart mr-2"></i>Mulai Belanja
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mt-6">
+                    <h2 class="text-xl font-bold text-denim-900 mb-6 flex items-center">
+                        <i class="fas fa-bolt mr-2 text-denim-600"></i>
+                        Aksi Cepat
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <a href="{% url 'cart' %}" 
+                           class="flex items-center justify-center p-4 border-2 border-denim-200 rounded-lg hover:bg-denim-50 transition-colors group">
+                            <i class="fas fa-shopping-cart text-denim-600 group-hover:scale-110 transition-transform mr-3"></i>
+                            <span class="font-medium text-denim-900">Lihat Keranjang</span>
+                        </a>
+                        
+                        <a href="{% url 'home' %}" 
+                           class="flex items-center justify-center p-4 border-2 border-denim-200 rounded-lg hover:bg-denim-50 transition-colors group">
+                            <i class="fas fa-store text-denim-600 group-hover:scale-110 transition-transform mr-3"></i>
+                            <span class="font-medium text-denim-900">Belanja Lagi</span>
+                        </a>
+                        
+                        <a href="#" 
+                           class="flex items-center justify-center p-4 border-2 border-denim-200 rounded-lg hover:bg-denim-50 transition-colors group">
+                            <i class="fas fa-heart text-denim-600 group-hover:scale-110 transition-transform mr-3"></i>
+                            <span class="font-medium text-denim-900">Wishlist</span>
+                        </a>
+                        
+                        <a href="#" 
+                           class="flex items-center justify-center p-4 border-2 border-denim-200 rounded-lg hover:bg-denim-50 transition-colors group">
+                            <i class="fas fa-cog text-denim-600 group-hover:scale-110 transition-transform mr-3"></i>
+                            <span class="font-medium text-denim-900">Pengaturan</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

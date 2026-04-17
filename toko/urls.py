@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 urlpatterns = [
@@ -14,4 +14,11 @@ urlpatterns = [
     path('konfirmasi-pembayaran/<str:order_id>/', views.konfirmasi_pembayaran, name='konfirmasi_pembayaran'),
     path('search/', views.search_produk, name='search'),
     path('kategori/<str:kategori>/', views.filter_kategori, name='filter_kategori'),
+    
+    # Authentication URLs
+    path('login/', views.login_view, name='login'),
+    path('register/', views.register_view, name='register'),
+    path('logout/', views.logout_view, name='logout'),
+    path('profile/', views.profile_view, name='profile'),
+    path('profile/edit/', views.edit_profile_view, name='edit_profile'),
 ]

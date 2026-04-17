@@ -1,4 +1,15 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_picture = models.ImageField(upload_to='profile/', null=True, blank=True)
+    bio = models.TextField(null=True, blank=True)
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"Profile of {self.user.username}"
 
 class Produk(models.Model):
     KATEGORI_CHOICES = [
@@ -45,11 +56,17 @@ class Pesanan(models.Model):
         ('selesai', 'Selesai'),
     )
     
+    METODE_PEMBAYARAN_CHOICES = (
+        ('qris', 'QRIS'),
+        ('transfer', 'Transfer Bank'),
+    )
+    
     id_pesanan = models.CharField(max_length=20, unique=True, null=True, blank=True)  # untuk QR code
     nama_pembeli = models.CharField(max_length=100)
     alamat = models.TextField()
     no_telepon = models.CharField(max_length=15, blank=True)
     total_harga = models.IntegerField()
+    metode_pembayaran = models.CharField(max_length=10, choices=METODE_PEMBAYARAN_CHOICES, default='qris')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     bukti_bayar = models.ImageField(upload_to='bukti/', null=True, blank=True)
     qr_code = models.ImageField(upload_to='qrcode/', null=True, blank=True)

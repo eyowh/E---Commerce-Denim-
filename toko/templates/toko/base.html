@@ -66,12 +66,64 @@
                         <a href="{% url 'filter_kategori' 'aksesoris' %}" class="block px-4 py-2 hover:bg-denim-50">Aksesoris</a>
                     </div>
                 </div>
-                <a href="{% url 'cart' %}" class="relative hover:text-denim-200 transition-colors">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="cart-count" class="absolute -top-2 -right-3 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                        {{ cart_count|default:0 }}
-                    </span>
-                </a>
+                
+                <!-- Authentication Links -->
+                {% if user.is_authenticated %}
+                    <!-- Cart Icon (only for logged in users) -->
+                    <a href="{% url 'cart' %}" class="relative hover:text-denim-200 transition-colors">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-3 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                            {{ cart_count|default:0 }}
+                        </span>
+                    </a>
+                    
+                    <!-- User Profile Dropdown -->
+                    <div class="relative group">
+                        <button class="flex items-center gap-2 hover:text-denim-200 transition-colors">
+                            {% if user.profile.profile_picture %}
+                                <img src="{{ user.profile.profile_picture.url }}?t={{ timestamp|default:'0' }}" alt="Profile" 
+                                     class="w-8 h-8 rounded-full border-2 border-white object-cover">
+                            {% else %}
+                                <div class="w-8 h-8 rounded-full border-2 border-white bg-denim-700 flex items-center justify-center">
+                                    <i class="fas fa-user text-sm"></i>
+                                </div>
+                            {% endif %}
+                            <span class="text-sm">{{ user.first_name|default:user.username }}</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div class="absolute top-full right-0 mt-2 w-56 bg-white text-denim-900 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                            <div class="px-4 py-3 border-b border-gray-200">
+                                <p class="font-semibold">{{ user.first_name|default:user.username }}</p>
+                                <p class="text-sm text-gray-500">{{ user.email|default:'' }}</p>
+                            </div>
+                            <a href="{% url 'profile' %}" class="block px-4 py-2 hover:bg-denim-50 flex items-center gap-2">
+                                <i class="fas fa-user text-sm"></i> Profil Saya
+                            </a>
+                            <a href="{% url 'edit_profile' %}" class="block px-4 py-2 hover:bg-denim-50 flex items-center gap-2">
+                                <i class="fas fa-edit text-sm"></i> Edit Profil
+                            </a>
+                            <a href="#" class="block px-4 py-2 hover:bg-denim-50 flex items-center gap-2">
+                                <i class="fas fa-shopping-bag text-sm"></i> Pesanan Saya
+                            </a>
+                            <div class="border-t border-gray-200 mt-2">
+                                <form action="{% url 'logout' %}" method="POST" class="block">
+                                    {% csrf_token %}
+                                    <button type="submit" class="w-full text-left px-4 py-2 hover:bg-denim-50 flex items-center gap-2 text-red-600">
+                                        <i class="fas fa-sign-out-alt text-sm"></i> Logout
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Login/Register Links -->
+                    <a href="{% url 'login' %}" class="bg-denim-700 text-white px-4 py-2 rounded-lg hover:bg-denim-600 transition-colors">
+                        <i class="fas fa-sign-in-alt mr-1"></i>Login
+                    </a>
+                    <a href="{% url 'register' %}" class="bg-white text-denim-900 px-4 py-2 rounded-lg hover:bg-denim-50 transition-colors border border-white">
+                        <i class="fas fa-user-plus mr-1"></i>Daftar
+                    </a>
+                {% endif %}
             </div>
 
             <!-- Mobile Menu Button -->
@@ -88,9 +140,11 @@
                 <a href="{% url 'filter_kategori' 'jaket' %}" class="hover:text-denim-200 transition-colors">Jaket Denim</a>
                 <a href="{% url 'filter_kategori' 'kaos' %}" class="hover:text-denim-200 transition-colors">Kaos Denim</a>
                 <a href="{% url 'filter_kategori' 'aksesoris' %}" class="hover:text-denim-200 transition-colors">Aksesoris</a>
-                <a href="{% url 'cart' %}" class="hover:text-denim-200 transition-colors">
-                    <i class="fas fa-shopping-cart mr-2"></i>Keranjang ({{ cart_count|default:0 }})
-                </a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'cart' %}" class="hover:text-denim-200 transition-colors">
+                        <i class="fas fa-shopping-cart mr-2"></i>Keranjang ({{ cart_count|default:0 }})
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -165,18 +219,20 @@
 </div>
 
 <!-- Notification Toast -->
-<div id="notification-toast" class="fixed top-4 right-4 max-w-sm bg-white rounded-lg shadow-xl border-l-4 border-green-500 p-4 transform translate-x-full transition-all duration-300 ease-in-out z-50 opacity-0">
-    <div class="flex items-center">
+<div id="notification-toast" class="fixed top-4 right-4 max-w-sm bg-white rounded-xl shadow-2xl border-l-4 border-green-500 p-4 transform translate-x-full transition-all duration-300 ease-in-out z-50 opacity-0 backdrop-blur-sm">
+    <div class="flex items-start gap-3">
+        <div class="flex-shrink-0 pt-0.5">
+            <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center" id="notification-icon-container">
+                <i class="fas fa-check-circle text-green-600 text-sm" id="notification-icon"></i>
+            </div>
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-gray-900 leading-tight" id="notification-title">Berhasil!</p>
+            <p class="mt-1 text-sm text-gray-600 leading-relaxed" id="notification-message">Operasi berhasil dilakukan</p>
+        </div>
         <div class="flex-shrink-0">
-            <i class="fas fa-check-circle text-green-500 text-xl" id="notification-icon"></i>
-        </div>
-        <div class="ml-3 w-0 flex-1">
-            <p class="text-sm font-medium text-gray-900" id="notification-title">Berhasil!</p>
-            <p class="mt-1 text-sm text-gray-500" id="notification-message">Operasi berhasil dilakukan</p>
-        </div>
-        <div class="ml-4 flex-shrink-0 flex">
-            <button class="inline-flex text-gray-400 hover:text-gray-500 focus:outline-none" onclick="hideNotification()">
-                <i class="fas fa-times"></i>
+            <button class="inline-flex items-center justify-center w-6 h-6 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300" onclick="hideNotification()">
+                <i class="fas fa-times text-xs"></i>
             </button>
         </div>
     </div>
@@ -213,8 +269,11 @@ function showNotification(message, type = 'success') {
         clearTimeout(notificationTimeout);
     }
     
-    // Reset classes
-    toast.className = 'fixed top-4 right-4 max-w-sm bg-white rounded-lg shadow-xl border-l-4 p-4 transform transition-all duration-300 ease-in-out z-50 opacity-0';
+    // Make sure toast is visible first
+    toast.classList.remove('hidden');
+    
+    // Reset classes to initial state
+    toast.className = 'fixed top-4 right-4 max-w-sm bg-white rounded-lg shadow-xl border-l-4 p-4 transform transition-all duration-300 ease-in-out z-50 opacity-0 translate-x-full';
     
     // Set content
     messageEl.textContent = message;
@@ -223,34 +282,48 @@ function showNotification(message, type = 'success') {
     const configs = {
         success: {
             border: 'border-green-500',
-            icon: 'fas fa-check-circle text-green-500',
+            icon: 'fas fa-check-circle text-green-600',
+            iconBg: 'bg-green-100',
             title: 'Berhasil!'
         },
         error: {
             border: 'border-red-500',
-            icon: 'fas fa-exclamation-circle text-red-500',
+            icon: 'fas fa-exclamation-circle text-red-600',
+            iconBg: 'bg-red-100',
             title: 'Error!'
         },
         warning: {
             border: 'border-yellow-500',
-            icon: 'fas fa-exclamation-triangle text-yellow-500',
+            icon: 'fas fa-exclamation-triangle text-yellow-600',
+            iconBg: 'bg-yellow-100',
             title: 'Peringatan!'
         },
         info: {
             border: 'border-blue-500',
-            icon: 'fas fa-info-circle text-blue-500',
+            icon: 'fas fa-info-circle text-blue-600',
+            iconBg: 'bg-blue-100',
             title: 'Info!'
         }
     };
     
     const config = configs[type] || configs.success;
     
-    // Apply styling
-    toast.classList.add(config.border, 'translate-x-0', 'opacity-100');
-    
     // Set icon and title
-    iconEl.className = config.icon + ' text-xl';
+    iconEl.className = config.icon + ' text-sm';
     titleEl.textContent = config.title;
+    
+    // Update icon container background
+    const iconContainer = document.getElementById('notification-icon-container');
+    iconContainer.className = `w-8 h-8 rounded-full ${config.iconBg} flex items-center justify-center`;
+    
+    // Apply border color
+    toast.classList.add(config.border);
+    
+    // Show notification with animation
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full', 'opacity-0');
+        toast.classList.add('translate-x-0', 'opacity-100');
+    }, 50);
     
     // Auto-hide after 4 seconds
     notificationTimeout = setTimeout(() => {
@@ -279,7 +352,59 @@ function hideNotification() {
 
 // Cart Update Functions
 function updateCartCount(count) {
-    document.getElementById('cart-count').textContent = count;
+    const cartCountElement = document.getElementById('cart-count');
+    if (cartCountElement) {
+        cartCountElement.textContent = count;
+    }
+}
+
+// Add to Cart Function
+function addToCart(productId) {
+    showLoading();
+    
+    fetch(`/add-to-cart/${productId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: `quantity=1`
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        if (data.success) {
+            updateCartCount(data.cart_count);
+            showNotification(data.message, 'success');
+        } else {
+            if (data.redirect) {
+                // Redirect to login page
+                window.location.href = data.redirect;
+            } else {
+                showNotification(data.message, 'error');
+            }
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        showNotification('Terjadi kesalahan, silakan coba lagi', 'error');
+    });
+}
+
+// Get CSRF Token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
 // Auto-hide messages after 5 seconds

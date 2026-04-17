@@ -1,9 +1,23 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from .models import Produk, Pesanan, ItemPesanan
+from .models import Produk, Pesanan, ItemPesanan, Profile
+
+# Context processor to make profile available in all templates
+def profile_context(request):
+    if request.user.is_authenticated:
+        import time
+        profile, created = Profile.objects.get_or_create(user=request.user)
+        return {
+            'profile': profile,
+            'timestamp': int(time.time())
+        }
+    return {}
+
 import qrcode
 from io import BytesIO
 from django.core.files import File
@@ -72,6 +86,16 @@ def detail_produk(request, id):
     return render(request, 'detail.html', context)
 
 def add_to_cart(request, produk_id):
+    if not request.user.is_authenticated:
+        if request.method == 'POST':
+            return JsonResponse({
+                'success': False,
+                'redirect': '/login/',
+                'message': 'Silakan login terlebih dahulu untuk menambahkan produk ke keranjang'
+            })
+        else:
+            return redirect('login')
+    
     if request.method == 'POST':
         produk = get_object_or_404(Produk, id=produk_id)
         quantity = int(request.POST.get('quantity', 1))
@@ -98,6 +122,7 @@ def add_to_cart(request, produk_id):
     
     return redirect('detail', id=produk_id)
 
+@login_required
 def cart(request):
     cart_items, total = get_cart(request)
     cart_count = sum(item['jumlah'] for item in cart_items)
@@ -158,6 +183,7 @@ def remove_from_cart(request, item_id):
     
     return redirect('cart')
 
+@login_required
 def checkout(request):
     cart_items, total = get_cart(request)
     
@@ -170,10 +196,11 @@ def checkout(request):
     if request.method == 'POST':
         # Create order
         pesanan = Pesanan.objects.create(
-            nama_pembeli=request.POST.get('nama_pembeli'),
-            alamat=request.POST.get('alamat'),
-            no_telepon=request.POST.get('no_telepon'),
+            nama_pembeli=request.user.first_name or request.user.username,
+            alamat=request.user.address or request.POST.get('alamat'),
+            no_telepon=request.user.phone_number or request.POST.get('no_telepon'),
             total_harga=total,
+            metode_pembayaran=request.POST.get('pembayaran', 'qris'),
         )
         
         # Create order items
@@ -287,3 +314,106 @@ def filter_kategori(request, kategori):
         'cart_count': cart_count,
     }
     return render(request, 'kategori.html', context)
+
+# Authentication Views
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            messages.success(request, 'Login berhasil! Selamat datang kembali.')
+            return redirect('home')
+        else:
+            messages.error(request, 'Username atau password salah!')
+    
+    return render(request, 'auth/login.html')
+
+def register_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        password_confirm = request.POST.get('password_confirm')
+        
+        if password != password_confirm:
+            messages.error(request, 'Password tidak sama!')
+            return redirect('register')
+        
+        from django.contrib.auth.models import User
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Username sudah digunakan!')
+            return redirect('register')
+        
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'Email sudah digunakan!')
+            return redirect('register')
+        
+        # Create user
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+        
+        # Create empty profile
+        Profile.objects.create(user=user)
+        
+        # Auto login after registration
+        login(request, user)
+        messages.success(request, 'Registrasi berhasil! Selamat datang di Catty Denim.')
+        return redirect('profile')
+    
+    return render(request, 'auth/register.html')
+
+@login_required
+def profile_view(request):
+    import time
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    context = {
+        'profile': profile,
+        'is_new_profile': created or (not profile.phone_number and not profile.address),
+        'timestamp': int(time.time())
+    }
+    return render(request, 'auth/profile.html', context)
+
+@login_required
+def edit_profile_view(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        user = request.user
+        
+        # Update user fields
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.email = request.POST.get('email', user.email)
+        user.save()
+        
+        # Update profile fields
+        profile.phone_number = request.POST.get('phone_number', profile.phone_number)
+        profile.address = request.POST.get('address', profile.address)
+        profile.bio = request.POST.get('bio', profile.bio)
+        
+        # Handle profile picture upload
+        if 'profile_picture' in request.FILES:
+            profile.profile_picture = request.FILES['profile_picture']
+        
+        profile.save()
+        
+        messages.success(request, 'Profil berhasil diperbarui!')
+        return redirect('profile')
+    
+    import time
+    context = {
+        'profile': profile,
+        'timestamp': int(time.time())
+    }
+    return render(request, 'auth/edit_profile.html', context)
+
+def logout_view(request):
+    logout(request)
+    messages.success(request, 'Logout berhasil!')
+    return redirect('home')

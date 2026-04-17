@@ -86,10 +86,10 @@
                     <div class="flex items-center justify-between mb-3">
                         <div>
                             {% if p.diskon > 0 %}
-                                <span class="text-lg font-bold text-denim-900">Rp {{ p.get_harga_setelah_diskon|format_number }}</span>
-                                <span class="text-sm text-gray-400 line-through ml-2">Rp {{ p.harga|format_number }}</span>
+                                <span class="text-lg font-bold text-denim-900">{{ p.get_harga_setelah_diskon|format_currency }}</span>
+                                <span class="text-sm text-gray-400 line-through ml-2">{{ p.harga|format_currency }}</span>
                             {% else %}
-                                <span class="text-lg font-bold text-denim-900">Rp {{ p.harga|format_number }}</span>
+                                <span class="text-lg font-bold text-denim-900">{{ p.harga|format_currency }}</span>
                             {% endif %}
                         </div>
                         <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">

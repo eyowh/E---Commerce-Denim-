@@ -45,17 +45,18 @@
 
 <!-- Photography Slider Section -->
 <section class="mb-8">
-    <div class="relative overflow-hidden rounded-2xl shadow-2xl bg-black" style="height: 600px;">
-        <div class="flex transition-transform duration-700 ease-in-out h-full" id="mainSlider">
+    <!-- Hero Slider -->
+    <section class="relative w-full h-[400px] overflow-hidden rounded-xl mb-8 shadow-lg">
+        <div id="mainSlider" class="relative w-full h-full flex transition-transform duration-500 ease-in-out">
             <!-- Image 1 -->
             <div class="relative w-full flex-shrink-0">
                 <img src="https://i.pinimg.com/1200x/a7/ef/be/a7efbe1c1cc75d0e224b5bf0801eb7a7.jpg" 
                      alt="Denim Photography 1" 
                      class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div class="absolute bottom-8 left-8 text-white">
-                    <h2 class="text-4xl font-bold mb-2">Japan Collection Handmade</h2>
-                    <p class="text-lg opacity-90">Authentic Japanese Denim Craftmanship</p>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                <div class="absolute bottom-6 left-6 text-white">
+                    <h2 class="text-3xl font-bold mb-1">Japan Collection Handmade</h2>
+                    <p class="text-base opacity-90">Authentic Japanese Denim Craftmanship</p>
                 </div>
             </div>
             
@@ -64,10 +65,10 @@
                 <img src="https://i.pinimg.com/1200x/c9/75/f9/c975f9a904f994ef153d65c2a52fd5af.jpg" 
                      alt="Denim Photography 2" 
                      class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div class="absolute bottom-8 left-8 text-white">
-                    <h2 class="text-4xl font-bold mb-2">Urban Street Style</h2>
-                    <p class="text-lg opacity-90">Modern Denim Collection</p>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                <div class="absolute bottom-6 left-6 text-white">
+                    <h2 class="text-3xl font-bold mb-1">Urban Street Style</h2>
+                    <p class="text-base opacity-90">Modern Denim Collection</p>
                 </div>
             </div>
             
@@ -76,39 +77,39 @@
                 <img src="https://i.pinimg.com/736x/f0/a1/62/f0a16232a6c203f4db5b54e567a5b933.jpg" 
                      alt="Denim Photography 3" 
                      class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div class="absolute bottom-8 left-8 text-white">
-                    <h2 class="text-4xl font-bold mb-2">Classic Denim Heritage</h2>
-                    <p class="text-lg opacity-90">I Can See Me In Your Eyes</p>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                <div class="absolute bottom-6 left-6 text-white">
+                    <h2 class="text-3xl font-bold mb-1">Classic Denim Heritage</h2>
+                    <p class="text-base opacity-90">Timeless Quality & Style</p>
                 </div>
             </div>
         </div>
         
         <!-- Navigation Controls -->
         <button onclick="prevSlide('mainSlider')" 
-                class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 group">
-            <i class="fas fa-chevron-left text-xl group-hover:scale-110 transition-transform"></i>
+                class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-all duration-300 group">
+            <i class="fas fa-chevron-left text-lg group-hover:scale-110 transition-transform"></i>
         </button>
         <button onclick="nextSlide('mainSlider')" 
-                class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 group">
-            <i class="fas fa-chevron-right text-xl group-hover:scale-110 transition-transform"></i>
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-all duration-300 group">
+            <i class="fas fa-chevron-right text-lg group-hover:scale-110 transition-transform"></i>
         </button>
         
         <!-- Slide Indicators -->
         <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
             <button onclick="goToSlide('mainSlider', 0)" 
-                    class="w-3 h-3 bg-white/50 rounded-full hover:bg-white transition-colors" id="indicator-0"></button>
+                    class="w-2 h-2 bg-white/50 rounded-full hover:bg-white transition-colors" id="indicator-0"></button>
             <button onclick="goToSlide('mainSlider', 1)" 
-                    class="w-3 h-3 bg-white/50 rounded-full hover:bg-white transition-colors" id="indicator-1"></button>
+                    class="w-2 h-2 bg-white/50 rounded-full hover:bg-white transition-colors" id="indicator-1"></button>
             <button onclick="goToSlide('mainSlider', 2)" 
-                    class="w-3 h-3 bg-white/50 rounded-full hover:bg-white transition-colors" id="indicator-2"></button>
+                    class="w-2 h-2 bg-white/50 rounded-full hover:bg-white transition-colors" id="indicator-2"></button>
         </div>
-    </div>
+    </section>
 </section>
 
 <!-- Best Sellers Section -->
 {% if best_sellers %}
-<section class="mb-12">
+<section class="mb-8">
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-3xl font-bold text-denim-900">
             <i class="fas fa-fire text-orange-500 mr-2"></i>Best Seller
@@ -116,11 +117,11 @@
         <a href="#" class="text-denim-600 hover:text-denim-800 transition-colors">Lihat Semua</a>
     </div>
     
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {% for p in best_sellers %}
-        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden group h-full flex flex-col">
+        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group h-full flex flex-col">
             <!-- Image Container -->
-            <div class="relative h-64 overflow-hidden">
+            <div class="relative h-48 overflow-hidden">
                 {% if p.gambar %}
                     <img src="{{ p.gambar.url }}" alt="{{ p.nama }}" 
                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
@@ -131,22 +132,22 @@
                 {% endif %}
                 
                 <!-- Badges -->
-                <div class="absolute top-2 left-2 flex flex-col gap-2">
+                <div class="absolute top-1.5 left-1.5 flex flex-col gap-1">
                     {% if p.is_best_seller %}
-                        <span class="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                            <i class="fas fa-fire mr-1"></i>Best Seller
+                        <span class="bg-orange-500 text-white px-1.5 py-0.5 rounded-full text-xs font-semibold">
+                            <i class="fas fa-fire mr-0.5 text-xs"></i>Best
                         </span>
                     {% endif %}
                 </div>
                 
                 <!-- Stock Badge -->
-                <div class="absolute top-2 right-2">
+                <div class="absolute top-1.5 right-1.5">
                     {% if p.stok > 0 %}
-                        <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                            Stok: {{ p.stok }}
+                        <span class="bg-green-500 text-white px-1.5 py-0.5 rounded-full text-xs font-semibold">
+                            {{ p.stok }}
                         </span>
                     {% else %}
-                        <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        <span class="bg-red-500 text-white px-1.5 py-0.5 rounded-full text-xs font-semibold">
                             Habis
                         </span>
                     {% endif %}
@@ -154,30 +155,30 @@
             </div>
             
             <!-- Product Info -->
-            <div class="p-4 flex flex-col h-full">
+            <div class="p-3 flex flex-col h-full">
                 <!-- Title and Description -->
                 <div class="flex flex-col flex-1 mb-2">
-                    <h3 class="font-semibold text-lg text-denim-900 mb-2 line-clamp-2">{{ p.nama }}</h3>
-                    <p class="text-sm text-gray-600 flex-1 line-clamp-4">{{ p.deskripsi|truncatewords:40 }}</p>
+                    <h3 class="font-semibold text-base text-denim-900 mb-1 line-clamp-2">{{ p.nama }}</h3>
+                    <p class="text-xs text-gray-600 flex-1 line-clamp-2">{{ p.deskripsi|truncatewords:15 }}</p>
                 </div>
                 
                 <!-- Price and Category -->
                 <div class="mb-2">
-                    <div class="text-right mb-2">
+                    <div class="text-right mb-1">
                         {% if p.diskon > 0 %}
                             <div class="flex items-baseline gap-1 justify-end">
-                                <span class="text-lg font-bold text-denim-900">Rp {{ p.get_harga_setelah_diskon|format_number }}</span>
+                                <span class="text-base font-bold text-denim-900">{{ p.get_harga_setelah_diskon|format_currency }}</span>
                             </div>
                             <div>
-                                <span class="text-sm text-gray-400 line-through">Rp {{ p.harga|format_number }}</span>
-                                <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded ml-2">-{{ p.diskon }}%</span>
+                                <span class="text-xs text-gray-400 line-through">{{ p.harga|format_currency }}</span>
+                                <span class="text-xs bg-red-100 text-red-600 px-1 py-0.5 rounded ml-1">-{{ p.diskon }}%</span>
                             </div>
                         {% else %}
-                            <span class="text-lg font-bold text-denim-900">Rp {{ p.harga|format_number }}</span>
+                            <span class="text-base font-bold text-denim-900">{{ p.harga|format_currency }}</span>
                         {% endif %}
                     </div>
                     
-                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full text-center inline-block max-w-[100px] truncate">
+                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full text-center inline-block max-w-[80px] truncate">
                         {{ p.get_kategori_display }}
                     </span>
                 </div>
@@ -185,7 +186,7 @@
                 <!-- Buttons -->
                 <div class="flex gap-2">
                     <a href="{% url 'detail' p.id %}" 
-                       class="flex-1 bg-denim-900 text-white py-2 px-4 rounded-lg hover:bg-denim-800 transition-colors text-center text-sm font-medium">
+                       class="flex-1 bg-denim-900 text-white py-1.5 px-3 rounded-lg hover:bg-denim-800 transition-colors text-center text-xs font-medium">
                         <i class="fas fa-eye mr-1"></i>Detail
                     </a>
                     {% if p.stok > 0 %}
@@ -194,7 +195,7 @@
                             <input type="hidden" name="quantity" value="1">
                         </form>
                         <button onclick="addToCart({{ p.id }})" 
-                                class="bg-denim-600 text-white px-4 py-2 rounded-lg hover:bg-denim-700 transition-colors text-sm">
+                                class="bg-denim-600 text-white px-3 py-1.5 rounded-lg hover:bg-denim-700 transition-colors text-xs">
                             <i class="fas fa-cart-plus"></i>
                         </button>
                     {% endif %}
@@ -226,11 +227,11 @@
         </div>
     </div>
     
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {% for p in produk %}
-        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden group h-full flex flex-col">
+        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group h-full flex flex-col">
             <!-- Image Container -->
-            <div class="relative h-64 overflow-hidden">
+            <div class="relative h-48 overflow-hidden">
                 {% if p.gambar %}
                     <img src="{{ p.gambar.url }}" alt="{{ p.nama }}" 
                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
@@ -241,22 +242,22 @@
                 {% endif %}
                 
                 <!-- Badges -->
-                <div class="absolute top-2 left-2 flex flex-col gap-2">
+                <div class="absolute top-1.5 left-1.5 flex flex-col gap-1">
                     {% if p.is_best_seller %}
-                        <span class="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                            <i class="fas fa-fire mr-1"></i>Best Seller
+                        <span class="bg-orange-500 text-white px-1.5 py-0.5 rounded-full text-xs font-semibold">
+                            <i class="fas fa-fire mr-0.5 text-xs"></i>Best
                         </span>
                     {% endif %}
                 </div>
                 
                 <!-- Stock Badge -->
-                <div class="absolute top-2 right-2">
+                <div class="absolute top-1.5 right-1.5">
                     {% if p.stok > 0 %}
-                        <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                            Stok: {{ p.stok }}
+                        <span class="bg-green-500 text-white px-1.5 py-0.5 rounded-full text-xs font-semibold">
+                            {{ p.stok }}
                         </span>
                     {% else %}
-                        <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        <span class="bg-red-500 text-white px-1.5 py-0.5 rounded-full text-xs font-semibold">
                             Habis
                         </span>
                     {% endif %}
@@ -264,30 +265,30 @@
             </div>
             
             <!-- Product Info -->
-            <div class="p-4 flex flex-col h-full">
+            <div class="p-3 flex flex-col h-full">
                 <!-- Title and Description -->
                 <div class="flex flex-col flex-1 mb-2">
-                    <h3 class="font-semibold text-lg text-denim-900 mb-2 line-clamp-2">{{ p.nama }}</h3>
-                    <p class="text-sm text-gray-600 flex-1 line-clamp-4">{{ p.deskripsi|truncatewords:40 }}</p>
+                    <h3 class="font-semibold text-base text-denim-900 mb-1 line-clamp-2">{{ p.nama }}</h3>
+                    <p class="text-xs text-gray-600 flex-1 line-clamp-2">{{ p.deskripsi|truncatewords:15 }}</p>
                 </div>
                 
                 <!-- Price and Category -->
                 <div class="mb-2">
-                    <div class="text-right mb-2">
+                    <div class="text-right mb-1">
                         {% if p.diskon > 0 %}
                             <div class="flex items-baseline gap-1 justify-end">
-                                <span class="text-lg font-bold text-denim-900">Rp {{ p.get_harga_setelah_diskon|format_number }}</span>
+                                <span class="text-base font-bold text-denim-900">{{ p.get_harga_setelah_diskon|format_currency }}</span>
                             </div>
                             <div>
-                                <span class="text-sm text-gray-400 line-through">Rp {{ p.harga|format_number }}</span>
-                                <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded ml-2">-{{ p.diskon }}%</span>
+                                <span class="text-xs text-gray-400 line-through">{{ p.harga|format_currency }}</span>
+                                <span class="text-xs bg-red-100 text-red-600 px-1 py-0.5 rounded ml-1">-{{ p.diskon }}%</span>
                             </div>
                         {% else %}
-                            <span class="text-lg font-bold text-denim-900">Rp {{ p.harga|format_number }}</span>
+                            <span class="text-base font-bold text-denim-900">{{ p.harga|format_currency }}</span>
                         {% endif %}
                     </div>
                     
-                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full text-center inline-block max-w-[100px] truncate">
+                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full text-center inline-block max-w-[80px] truncate">
                         {{ p.get_kategori_display }}
                     </span>
                 </div>
@@ -295,7 +296,7 @@
                 <!-- Buttons -->
                 <div class="flex gap-2">
                     <a href="{% url 'detail' p.id %}" 
-                       class="flex-1 bg-denim-900 text-white py-2 px-4 rounded-lg hover:bg-denim-800 transition-colors text-center text-sm font-medium">
+                       class="flex-1 bg-denim-900 text-white py-1.5 px-3 rounded-lg hover:bg-denim-800 transition-colors text-center text-xs font-medium">
                         <i class="fas fa-eye mr-1"></i>Detail
                     </a>
                     {% if p.stok > 0 %}
@@ -304,7 +305,7 @@
                             <input type="hidden" name="quantity" value="1">
                         </form>
                         <button onclick="addToCart({{ p.id }})" 
-                                class="bg-denim-600 text-white px-4 py-2 rounded-lg hover:bg-denim-700 transition-colors text-sm">
+                                class="bg-denim-600 text-white px-3 py-1.5 rounded-lg hover:bg-denim-700 transition-colors text-xs">
                             <i class="fas fa-cart-plus"></i>
                         </button>
                     {% endif %}

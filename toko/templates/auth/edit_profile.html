@@ -1,0 +1,250 @@
+{% extends 'toko/base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-denim-900">Edit Profil</h1>
+                    <p class="text-gray-600 mt-1">Perbarui informasi profil Anda</p>
+                </div>
+                <a href="{% url 'profile' %}" 
+                   class="bg-gray-200 text-denim-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors inline-flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i>Kembali
+                </a>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="bg-{{ message.tags }}-100 border border-{{ message.tags }}-400 text-{{ message.tags }}-700 px-4 py-3 rounded-lg mb-6" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Profile Picture Section -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-lg font-bold text-denim-900 mb-6">Foto Profil</h2>
+                    
+                    <div class="text-center">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}?t={{ timestamp|default:'0' }}" alt="Profile" 
+                                 class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-denim-100 object-cover">
+                        {% else %}
+                            <div class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-denim-100 bg-denim-100 flex items-center justify-center">
+                                <i class="fas fa-user text-denim-900 text-4xl"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Information Form -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-lg font-bold text-denim-900 mb-6">Informasi Pribadi</h2>
+                    
+                    <form method="POST" action="{% url 'edit_profile' %}" enctype="multipart/form-data" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <!-- Profile Picture Upload -->
+                        <div class="mb-6">
+                            <label for="profile_picture" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-camera mr-2"></i>Ganti Foto Profil
+                            </label>
+                            <input type="file" id="profile_picture" name="profile_picture" accept="image/*"
+                                   class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-denim-50 file:text-denim-700 hover:file:bg-denim-100">
+                            <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Maksimal 5MB</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Nama Lengkap
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-user text-gray-400"></i>
+                                    </div>
+                                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name|default:'' }}"
+                                           class="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-denim-500 focus:border-denim-500 sm:text-sm"
+                                           placeholder="Masukkan nama lengkap">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Username
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-at text-gray-400"></i>
+                                    </div>
+                                    <input type="text" id="username" name="username" value="{{ user.username }}" readonly
+                                           class="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 bg-gray-50 text-gray-500 sm:text-sm"
+                                           placeholder="Username tidak dapat diubah">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                                Email
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                                <input type="email" id="email" name="email" value="{{ user.email|default:'' }}"
+                                       class="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-denim-500 focus:border-denim-500 sm:text-sm"
+                                       placeholder="Masukkan email">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-1">
+                                Nomor Telepon
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-phone text-gray-400"></i>
+                                </div>
+                                <input type="tel" id="phone_number" name="phone_number" value="{{ user.phone_number|default:'' }}"
+                                       class="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-denim-500 focus:border-denim-500 sm:text-sm"
+                                       placeholder="Masukkan nomor telepon">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="address" class="block text-sm font-medium text-gray-700 mb-1">
+                                Alamat Lengkap
+                            </label>
+                            <div class="relative">
+                                <div class="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
+                                    <i class="fas fa-home text-gray-400 mt-0.5"></i>
+                                </div>
+                                <textarea id="address" name="address" rows="4"
+                                          class="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-denim-500 focus:border-denim-500 sm:text-sm resize-none"
+                                          placeholder="Masukkan alamat lengkap">{{ user.address|default:'' }}</textarea>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="bio" class="block text-sm font-medium text-gray-700 mb-1">
+                                Bio
+                            </label>
+                            <div class="relative">
+                                <div class="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
+                                    <i class="fas fa-info-circle text-gray-400 mt-0.5"></i>
+                                </div>
+                                <textarea id="bio" name="bio" rows="3"
+                                          class="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-denim-500 focus:border-denim-500 sm:text-sm resize-none"
+                                          placeholder="Ceritakan sedikit tentang diri Anda">{{ user.bio|default:'' }}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-4">
+                            <a href="{% url 'profile' %}" 
+                               class="bg-gray-200 text-denim-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors inline-flex items-center">
+                                <i class="fas fa-times mr-2"></i>Batal
+                            </a>
+                            <button type="submit" 
+                                    class="bg-denim-900 text-white px-6 py-3 rounded-lg hover:bg-denim-800 transition-colors inline-flex items-center">
+                                <i class="fas fa-save mr-2"></i>Simpan Perubahan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Profile Photo Preview -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const profilePictureInput = document.getElementById('profile_picture');
+    const profileImageContainer = document.querySelector('.text-center'); // Container for profile image
+    
+    if (profilePictureInput) {
+        profilePictureInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // Update the image preview
+                    const existingImg = profileImageContainer.querySelector('img');
+                    const existingPlaceholder = profileImageContainer.querySelector('.w-32.h-32.rounded-full');
+                    
+                    if (existingImg) {
+                        existingImg.src = e.target.result;
+                    } else if (existingPlaceholder) {
+                        // Replace placeholder with actual image
+                        const newImg = document.createElement('img');
+                        newImg.src = e.target.result;
+                        newImg.alt = 'Profile Preview';
+                        newImg.className = 'w-32 h-32 rounded-full mx-auto mb-4 border-4 border-denim-100 object-cover';
+                        existingPlaceholder.parentNode.replaceChild(newImg, existingPlaceholder);
+                    }
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // Form submission feedback
+    const form = document.querySelector('form[enctype="multipart/form-data"]');
+    if (form) {
+        form.addEventListener('submit', function() {
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
+            }
+        });
+    }
+    
+    // Add cache-busting to profile images
+    function addCacheBustingToImages() {
+        const profileImages = document.querySelectorAll('img[src*="profile"]');
+        const timestamp = new Date().getTime();
+        
+        profileImages.forEach(img => {
+            if (img.src.includes('profile')) {
+                const separator = img.src.includes('?') ? '&' : '?';
+                img.src = img.src + separator + 't=' + timestamp;
+            }
+        });
+    }
+    
+    // Update navbar profile image if it exists
+    function updateNavbarProfileImage() {
+        const navbarProfileImg = document.querySelector('.group img[alt="Profile"]');
+        if (navbarProfileImg && navbarProfileImg.src.includes('profile')) {
+            const timestamp = new Date().getTime();
+            const separator = navbarProfileImg.src.includes('?') ? '&' : '?';
+            navbarProfileImg.src = navbarProfileImg.src + separator + 't=' + timestamp;
+        }
+    }
+    
+    // Check for success message and update images
+    const successMessage = document.querySelector('.bg-green-100, .bg-green-50');
+    if (successMessage) {
+        // Add cache-busting to all profile images
+        setTimeout(() => {
+            addCacheBustingToImages();
+            updateNavbarProfileImage();
+        }, 100);
+    }
+});
+</script>
+
+{% endblock %}
