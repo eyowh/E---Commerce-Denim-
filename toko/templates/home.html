@@ -10,10 +10,10 @@
             <p class="text-xl mb-6 text-denim-100">Crafted from high-quality denim that is durable, strong, and comfortable for everyday wear.</p>
             <div class="flex flex-col sm:flex-row gap-4">
                 <a href="#products" class="bg-white text-denim-900 px-6 py-3 rounded-lg font-semibold hover:bg-denim-50 transition-colors">
-                    Lihat Koleksi
+                    View Collection
                 </a>
                 <a href="{% url 'filter_kategori' 'celana' %}" class="border-2 border-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-denim-900 transition-colors">
-                    Celana Jeans
+                    Jeans
                 </a>
             </div>
         </div>
@@ -32,12 +32,12 @@
         <form action="{% url 'search' %}" method="GET" class="flex flex-col sm:flex-row gap-4">
             <div class="flex-1 relative">
                 <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="text" name="q" placeholder="Cari produk denim..." 
+                <input type="text" name="q" placeholder="Search denim products..." 
                        class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-denim-500 focus:border-transparent"
                        value="{{ query|default:'' }}">
             </div>
             <button type="submit" class="bg-denim-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-denim-800 transition-colors">
-                <i class="fas fa-search mr-2"></i>Cari
+                <i class="fas fa-search mr-2"></i>Search
             </button>
         </form>
     </div>
@@ -114,12 +114,12 @@
         <h2 class="text-3xl font-bold text-denim-900">
             <i class="fas fa-fire text-orange-500 mr-2"></i>Best Seller
         </h2>
-        <a href="#" class="text-denim-600 hover:text-denim-800 transition-colors">Lihat Semua</a>
+        <a href="#" class="text-denim-600 hover:text-denim-800 transition-colors">View All</a>
     </div>
     
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {% for p in best_sellers %}
-        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group h-full flex flex-col">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden group h-full flex flex-col border border-denim-100">
             <!-- Image Container -->
             <div class="relative h-48 overflow-hidden">
                 {% if p.gambar %}
@@ -155,11 +155,11 @@
             </div>
             
             <!-- Product Info -->
-            <div class="p-3 flex flex-col h-full">
+            <div class="p-2 flex flex-col h-full bg-denim-50">
                 <!-- Title and Description -->
-                <div class="flex flex-col flex-1 mb-2">
-                    <h3 class="font-semibold text-base text-denim-900 mb-1 line-clamp-2">{{ p.nama }}</h3>
-                    <p class="text-xs text-gray-600 flex-1 line-clamp-2">{{ p.deskripsi|truncatewords:15 }}</p>
+                <div class="flex flex-col flex-1 mb-3">
+                    <h3 class="font-semibold text-base text-denim-900 mb-2 line-clamp-2">{{ p.nama }}</h3>
+                    <p class="text-sm text-gray-600 flex-1 line-clamp-3">{{ p.deskripsi|truncatewords:20 }}</p>
                 </div>
                 
                 <!-- Price and Category -->
@@ -179,15 +179,15 @@
                     </div>
                     
                     <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full text-center inline-block max-w-[80px] truncate">
-                        {{ p.get_kategori_display }}
+                        {% if p.kategori == 'celana' %}Jeans{% elif p.kategori == 'jaket' %}Jackets{% elif p.kategori == 'kaos' %}T-Shirts{% else %}Accessories{% endif %}
                     </span>
                 </div>
                 
                 <!-- Buttons -->
                 <div class="flex gap-2">
                     <a href="{% url 'detail' p.id %}" 
-                       class="flex-1 bg-denim-900 text-white py-1.5 px-3 rounded-lg hover:bg-denim-800 transition-colors text-center text-xs font-medium">
-                        <i class="fas fa-eye mr-1"></i>Detail
+                       class="flex-1 bg-denim-900 text-white py-2 px-3 rounded-lg hover:bg-denim-800 transition-colors text-center text-sm font-medium">
+                        <i class="fas fa-eye mr-1"></i>Details
                     </a>
                     {% if p.stok > 0 %}
                         <form action="{% url 'add_to_cart' p.id %}" method="POST" class="hidden" id="cart-form-{{ p.id }}">
@@ -195,7 +195,7 @@
                             <input type="hidden" name="quantity" value="1">
                         </form>
                         <button onclick="addToCart({{ p.id }})" 
-                                class="bg-denim-600 text-white px-3 py-1.5 rounded-lg hover:bg-denim-700 transition-colors text-xs">
+                                class="bg-denim-600 text-white px-3 py-2 rounded-lg hover:bg-denim-700 transition-colors text-sm">
                             <i class="fas fa-cart-plus"></i>
                         </button>
                     {% endif %}
@@ -210,26 +210,26 @@
 <!-- All Products Section -->
 <section id="products">
     <div class="flex items-center justify-between mb-6">
-        <h2 class="text-3xl font-bold text-denim-900">Semua Produk</h2>
+        <h2 class="text-3xl font-bold text-denim-900">All Products</h2>
         <div class="flex gap-2">
             <a href="{% url 'filter_kategori' 'celana' %}" class="bg-denim-100 text-denim-700 px-4 py-2 rounded-lg hover:bg-denim-200 transition-colors text-sm">
-                Celana
+                Jeans
             </a>
             <a href="{% url 'filter_kategori' 'jaket' %}" class="bg-denim-100 text-denim-700 px-4 py-2 rounded-lg hover:bg-denim-200 transition-colors text-sm">
-                Jaket
+                Jackets
             </a>
             <a href="{% url 'filter_kategori' 'kaos' %}" class="bg-denim-100 text-denim-700 px-4 py-2 rounded-lg hover:bg-denim-200 transition-colors text-sm">
-                Kaos
+                T-Shirts
             </a>
             <a href="{% url 'filter_kategori' 'aksesoris' %}" class="bg-denim-100 text-denim-700 px-4 py-2 rounded-lg hover:bg-denim-200 transition-colors text-sm">
-                Aksesoris
+                Accessories
             </a>
         </div>
     </div>
     
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {% for p in produk %}
-        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group h-full flex flex-col">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden group h-full flex flex-col border border-denim-100">
             <!-- Image Container -->
             <div class="relative h-48 overflow-hidden">
                 {% if p.gambar %}
@@ -265,11 +265,11 @@
             </div>
             
             <!-- Product Info -->
-            <div class="p-3 flex flex-col h-full">
+            <div class="p-2 flex flex-col h-full bg-denim-50">
                 <!-- Title and Description -->
-                <div class="flex flex-col flex-1 mb-2">
-                    <h3 class="font-semibold text-base text-denim-900 mb-1 line-clamp-2">{{ p.nama }}</h3>
-                    <p class="text-xs text-gray-600 flex-1 line-clamp-2">{{ p.deskripsi|truncatewords:15 }}</p>
+                <div class="flex flex-col flex-1 mb-3">
+                    <h3 class="font-semibold text-base text-denim-900 mb-2 line-clamp-2">{{ p.nama }}</h3>
+                    <p class="text-sm text-gray-600 flex-1 line-clamp-3">{{ p.deskripsi|truncatewords:20 }}</p>
                 </div>
                 
                 <!-- Price and Category -->
@@ -289,15 +289,15 @@
                     </div>
                     
                     <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full text-center inline-block max-w-[80px] truncate">
-                        {{ p.get_kategori_display }}
+                        {% if p.kategori == 'celana' %}Jeans{% elif p.kategori == 'jaket' %}Jackets{% elif p.kategori == 'kaos' %}T-Shirts{% else %}Accessories{% endif %}
                     </span>
                 </div>
                 
                 <!-- Buttons -->
                 <div class="flex gap-2">
                     <a href="{% url 'detail' p.id %}" 
-                       class="flex-1 bg-denim-900 text-white py-1.5 px-3 rounded-lg hover:bg-denim-800 transition-colors text-center text-xs font-medium">
-                        <i class="fas fa-eye mr-1"></i>Detail
+                       class="flex-1 bg-denim-900 text-white py-2 px-3 rounded-lg hover:bg-denim-800 transition-colors text-center text-sm font-medium">
+                        <i class="fas fa-eye mr-1"></i>Details
                     </a>
                     {% if p.stok > 0 %}
                         <form action="{% url 'add_to_cart' p.id %}" method="POST" class="hidden" id="cart-form-{{ p.id }}">
@@ -305,7 +305,7 @@
                             <input type="hidden" name="quantity" value="1">
                         </form>
                         <button onclick="addToCart({{ p.id }})" 
-                                class="bg-denim-600 text-white px-3 py-1.5 rounded-lg hover:bg-denim-700 transition-colors text-xs">
+                                class="bg-denim-600 text-white px-3 py-2 rounded-lg hover:bg-denim-700 transition-colors text-sm">
                             <i class="fas fa-cart-plus"></i>
                         </button>
                     {% endif %}
@@ -315,7 +315,7 @@
         {% empty %}
         <div class="col-span-full text-center py-12">
             <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
-            <p class="text-gray-500 text-lg">Belum ada produk tersedia</p>
+            <p class="text-gray-500 text-lg">No products available</p>
         </div>
         {% endfor %}
     </div>

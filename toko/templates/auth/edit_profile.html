@@ -7,12 +7,12 @@
         <div class="mb-8">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-denim-900">Edit Profil</h1>
-                    <p class="text-gray-600 mt-1">Perbarui informasi profil Anda</p>
+                    <h1 class="text-3xl font-bold text-denim-900">Edit Profile</h1>
+                    <p class="text-gray-600 mt-1">Update your profile information</p>
                 </div>
                 <a href="{% url 'profile' %}" 
                    class="bg-gray-200 text-denim-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors inline-flex items-center">
-                    <i class="fas fa-arrow-left mr-2"></i>Kembali
+                    <i class="fas fa-arrow-left mr-2"></i>Back
                 </a>
             </div>
         </div>
@@ -29,7 +29,7 @@
             <!-- Profile Picture Section -->
             <div class="lg:col-span-1">
                 <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-lg font-bold text-denim-900 mb-6">Foto Profil</h2>
+                    <h2 class="text-lg font-bold text-denim-900 mb-6">Profile Picture</h2>
                     
                     <div class="text-center">
                         {% if profile.profile_picture %}
@@ -47,7 +47,7 @@
             <!-- Profile Information Form -->
             <div class="lg:col-span-2">
                 <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-lg font-bold text-denim-900 mb-6">Informasi Pribadi</h2>
+                    <h2 class="text-lg font-bold text-denim-900 mb-6">Personal Information</h2>
                     
                     <form method="POST" action="{% url 'edit_profile' %}" enctype="multipart/form-data" class="space-y-6">
                         {% csrf_token %}
@@ -55,17 +55,17 @@
                         <!-- Profile Picture Upload -->
                         <div class="mb-6">
                             <label for="profile_picture" class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-camera mr-2"></i>Ganti Foto Profil
+                                <i class="fas fa-camera mr-2"></i>Change Profile Picture
                             </label>
                             <input type="file" id="profile_picture" name="profile_picture" accept="image/*"
                                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-denim-50 file:text-denim-700 hover:file:bg-denim-100">
-                            <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Maksimal 5MB</p>
+                            <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Max 5MB</p>
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1">
-                                    Nama Lengkap
+                                    Full Name
                                 </label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -73,7 +73,7 @@
                                     </div>
                                     <input type="text" id="first_name" name="first_name" value="{{ user.first_name|default:'' }}"
                                            class="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-denim-500 focus:border-denim-500 sm:text-sm"
-                                           placeholder="Masukkan nama lengkap">
+                                           placeholder="Enter your full name">
                                 </div>
                             </div>
 
@@ -87,7 +87,7 @@
                                     </div>
                                     <input type="text" id="username" name="username" value="{{ user.username }}" readonly
                                            class="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 bg-gray-50 text-gray-500 sm:text-sm"
-                                           placeholder="Username tidak dapat diubah">
+                                           placeholder="Username cannot be changed">
                                 </div>
                             </div>
                         </div>
@@ -102,13 +102,13 @@
                                 </div>
                                 <input type="email" id="email" name="email" value="{{ user.email|default:'' }}"
                                        class="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-denim-500 focus:border-denim-500 sm:text-sm"
-                                       placeholder="Masukkan email">
+                                       placeholder="Enter your email">
                             </div>
                         </div>
 
                         <div>
                             <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-1">
-                                Nomor Telepon
+                                Phone Number
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -116,13 +116,13 @@
                                 </div>
                                 <input type="tel" id="phone_number" name="phone_number" value="{{ user.phone_number|default:'' }}"
                                        class="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-denim-500 focus:border-denim-500 sm:text-sm"
-                                       placeholder="Masukkan nomor telepon">
+                                       placeholder="Enter your phone number">
                             </div>
                         </div>
 
                         <div>
                             <label for="address" class="block text-sm font-medium text-gray-700 mb-1">
-                                Alamat Lengkap
+                                Complete Address
                             </label>
                             <div class="relative">
                                 <div class="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
@@ -130,7 +130,7 @@
                                 </div>
                                 <textarea id="address" name="address" rows="4"
                                           class="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-denim-500 focus:border-denim-500 sm:text-sm resize-none"
-                                          placeholder="Masukkan alamat lengkap">{{ user.address|default:'' }}</textarea>
+                                          placeholder="Enter your complete address">{{ user.address|default:'' }}</textarea>
                             </div>
                         </div>
 
@@ -144,18 +144,18 @@
                                 </div>
                                 <textarea id="bio" name="bio" rows="3"
                                           class="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-denim-500 focus:border-denim-500 sm:text-sm resize-none"
-                                          placeholder="Ceritakan sedikit tentang diri Anda">{{ user.bio|default:'' }}</textarea>
+                                          placeholder="Tell us a little about yourself">{{ user.bio|default:'' }}</textarea>
                             </div>
                         </div>
 
                         <div class="flex justify-end space-x-4">
                             <a href="{% url 'profile' %}" 
                                class="bg-gray-200 text-denim-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors inline-flex items-center">
-                                <i class="fas fa-times mr-2"></i>Batal
+                                <i class="fas fa-times mr-2"></i>Cancel
                             </a>
                             <button type="submit" 
                                     class="bg-denim-900 text-white px-6 py-3 rounded-lg hover:bg-denim-800 transition-colors inline-flex items-center">
-                                <i class="fas fa-save mr-2"></i>Simpan Perubahan
+                                <i class="fas fa-save mr-2"></i>Save Changes
                             </button>
                         </div>
                     </form>
@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const submitBtn = form.querySelector('button[type="submit"]');
             if (submitBtn) {
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
             }
         });
     }

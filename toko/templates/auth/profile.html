@@ -36,7 +36,7 @@
                     <div>
                         <a href="{% url 'edit_profile' %}" 
                            class="bg-denim-900 text-white px-6 py-3 rounded-lg hover:bg-denim-800 transition-colors inline-flex items-center">
-                            <i class="fas fa-edit mr-2"></i>Edit Profil
+                            <i class="fas fa-edit mr-2"></i>Edit Profile
                         </a>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h2 class="text-xl font-bold text-denim-900 mb-6 flex items-center">
                         <i class="fas fa-address-card mr-2 text-denim-600"></i>
-                        Informasi Kontak
+                        Contact Information
                     </h2>
                     
                     {% if is_new_profile %}
@@ -58,8 +58,8 @@
                         <div class="flex items-start">
                             <i class="fas fa-info-circle text-blue-600 mt-0.5 mr-3"></i>
                             <div>
-                                <p class="text-blue-800 font-medium">Profil Anda belum lengkap!</p>
-                                <p class="text-blue-700 text-sm mt-1">Lengkapi profil Anda untuk pengalaman berbelanja yang lebih baik.</p>
+                                <p class="text-blue-800 font-medium">Your profile is incomplete!</p>
+                                <p class="text-blue-700 text-sm mt-1">Complete your profile for a better shopping experience.</p>
                             </div>
                         </div>
                     </div>
@@ -70,23 +70,23 @@
                             <i class="fas fa-envelope text-gray-400 mt-1"></i>
                             <div>
                                 <p class="text-sm text-gray-500">Email</p>
-                                <p class="font-medium">{{ user.email|default:'Belum diisi' }}</p>
+                                <p class="font-medium">{{ user.email|default:'Not provided' }}</p>
                             </div>
                         </div>
 
                         <div class="flex items-start space-x-3">
                             <i class="fas fa-phone text-gray-400 mt-1"></i>
                             <div>
-                                <p class="text-sm text-gray-500">Telepon</p>
-                                <p class="font-medium">{{ profile.phone_number|default:'Belum diisi' }}</p>
+                                <p class="text-sm text-gray-500">Phone</p>
+                                <p class="font-medium">{{ profile.phone_number|default:'Not provided' }}</p>
                             </div>
                         </div>
 
                         <div class="flex items-start space-x-3">
                             <i class="fas fa-home text-gray-400 mt-1"></i>
                             <div>
-                                <p class="text-sm text-gray-500">Alamat</p>
-                                <p class="font-medium">{{ profile.address|default:'Belum diisi' }}</p>
+                                <p class="text-sm text-gray-500">Address</p>
+                                <p class="font-medium">{{ profile.address|default:'Not provided' }}</p>
                             </div>
                         </div>
                     </div>
@@ -96,16 +96,16 @@
                 <div class="bg-white rounded-xl shadow-lg p-6 mt-6">
                     <h2 class="text-xl font-bold text-denim-900 mb-6 flex items-center">
                         <i class="fas fa-chart-bar mr-2 text-denim-600"></i>
-                        Statistik Akun
+                        Account Statistics
                     </h2>
                     
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Total Pesanan</span>
+                            <span class="text-gray-600">Total Orders</span>
                             <span class="font-bold text-denim-900">0</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Member Sejak</span>
+                            <span class="text-gray-600">Member Since</span>
                             <span class="font-bold text-denim-900">{{ user.date_joined|date:"d M Y" }}</span>
                         </div>
                     </div>
@@ -117,7 +117,7 @@
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h2 class="text-xl font-bold text-denim-900 mb-6 flex items-center">
                         <i class="fas fa-shopping-bag mr-2 text-denim-600"></i>
-                        Pesanan Terbaru
+                        Recent Orders
                     </h2>
                     
                     <!-- Empty State -->
@@ -125,11 +125,11 @@
                         <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-box text-gray-400 text-3xl"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Belum Ada Pesanan</h3>
-                        <p class="text-gray-600 mb-6">Anda belum memiliki pesanan. Mulai belanja sekarang!</p>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">No Orders Yet</h3>
+                        <p class="text-gray-600 mb-6">You don't have any orders yet. Start shopping now!</p>
                         <a href="{% url 'home' %}" 
                            class="bg-denim-900 text-white px-6 py-3 rounded-lg hover:bg-denim-800 transition-colors inline-flex items-center">
-                            <i class="fas fa-shopping-cart mr-2"></i>Mulai Belanja
+                            <i class="fas fa-shopping-cart mr-2"></i>Start Shopping
                         </a>
                     </div>
                 </div>
@@ -138,34 +138,26 @@
                 <div class="bg-white rounded-xl shadow-lg p-6 mt-6">
                     <h2 class="text-xl font-bold text-denim-900 mb-6 flex items-center">
                         <i class="fas fa-bolt mr-2 text-denim-600"></i>
-                        Aksi Cepat
+                        Quick Actions
                     </h2>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 gap-4">
                         <a href="{% url 'cart' %}" 
-                           class="flex items-center justify-center p-4 border-2 border-denim-200 rounded-lg hover:bg-denim-50 transition-colors group">
+                           class="flex items-center justify-center p-4 border-2 border-denim-200 rounded-lg hover:bg-denim-50 transition-colors group relative">
                             <i class="fas fa-shopping-cart text-denim-600 group-hover:scale-110 transition-transform mr-3"></i>
-                            <span class="font-medium text-denim-900">Lihat Keranjang</span>
+                            <span class="font-medium text-denim-900">View Cart</span>
+                            <span class="absolute top-2 right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                                {{ cart_count|default:0 }}
+                            </span>
                         </a>
                         
                         <a href="{% url 'home' %}" 
                            class="flex items-center justify-center p-4 border-2 border-denim-200 rounded-lg hover:bg-denim-50 transition-colors group">
                             <i class="fas fa-store text-denim-600 group-hover:scale-110 transition-transform mr-3"></i>
-                            <span class="font-medium text-denim-900">Belanja Lagi</span>
+                            <span class="font-medium text-denim-900">Shop Again</span>
                         </a>
                         
-                        <a href="#" 
-                           class="flex items-center justify-center p-4 border-2 border-denim-200 rounded-lg hover:bg-denim-50 transition-colors group">
-                            <i class="fas fa-heart text-denim-600 group-hover:scale-110 transition-transform mr-3"></i>
-                            <span class="font-medium text-denim-900">Wishlist</span>
-                        </a>
-                        
-                        <a href="#" 
-                           class="flex items-center justify-center p-4 border-2 border-denim-200 rounded-lg hover:bg-denim-50 transition-colors group">
-                            <i class="fas fa-cog text-denim-600 group-hover:scale-110 transition-transform mr-3"></i>
-                            <span class="font-medium text-denim-900">Pengaturan</span>
-                        </a>
-                    </div>
+                                            </div>
                 </div>
             </div>
         </div>

@@ -7,7 +7,7 @@
 <nav class="flex items-center gap-2 text-sm text-gray-600 mb-6">
     <a href="{% url 'home' %}" class="hover:text-denim-900">Home</a>
     <i class="fas fa-chevron-right text-xs"></i>
-    <a href="{% url 'filter_kategori' produk.kategori %}" class="hover:text-denim-900">{{ produk.get_kategori_display }}</a>
+    <a href="{% url 'filter_kategori' produk.kategori %}" class="hover:text-denim-900">{% if produk.kategori == 'celana' %}Jeans{% elif produk.kategori == 'jaket' %}Jackets{% elif produk.kategori == 'kaos' %}T-Shirts{% else %}Accessories{% endif %}</a>
     <i class="fas fa-chevron-right text-xs"></i>
     <span class="text-denim-900">{{ produk.nama }}</span>
 </nav>
@@ -144,7 +144,7 @@
                     </span>
                 {% endif %}
                 <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
-                    {{ produk.get_kategori_display }}
+                    {% if produk.kategori == 'celana' %}Jeans{% elif produk.kategori == 'jaket' %}Jackets{% elif produk.kategori == 'kaos' %}T-Shirts{% else %}Accessories{% endif %}
                 </span>
             </div>
 
@@ -161,7 +161,7 @@
                         <span class="text-3xl font-bold text-denim-900">{{ produk.get_harga_setelah_diskon|format_currency }}</span>
                         <span class="text-xl text-gray-400 line-through">{{ produk.harga|format_currency }}</span>
                         <span class="bg-red-100 text-red-600 px-2 py-1 rounded text-sm font-semibold">
-                            Hemat {{ produk.diskon }}%
+                            Save {{ produk.diskon }}%
                         </span>
                     </div>
                 {% else %}
@@ -174,12 +174,12 @@
                 {% if produk.stok > 0 %}
                     <div class="flex items-center gap-2 text-green-600">
                         <i class="fas fa-check-circle"></i>
-                        <span class="font-medium">Stok tersedia: {{ produk.stok }} pcs</span>
+                        <span class="font-medium">In stock: {{ produk.stok }} pcs</span>
                     </div>
                 {% else %}
                     <div class="flex items-center gap-2 text-red-600">
                         <i class="fas fa-times-circle"></i>
-                        <span class="font-medium">Stok habis</span>
+                        <span class="font-medium">Out of stock</span>
                     </div>
                 {% endif %}
             </div>
@@ -189,7 +189,7 @@
             <form id="add-to-cart-form" class="mb-6">
                 {% csrf_token %}
                 <div class="flex items-center gap-4 mb-4">
-                    <label class="text-gray-700 font-medium">Jumlah:</label>
+                    <label class="text-gray-700 font-medium">Quantity:</label>
                     <div class="flex items-center border border-gray-300 rounded-lg">
                         <button type="button" onclick="decreaseQuantity()" 
                                 class="px-3 py-2 hover:bg-gray-100 transition-colors">
@@ -207,36 +207,36 @@
                 <div class="flex gap-3">
                     <button type="submit" 
                             class="flex-1 bg-denim-900 text-white py-3 rounded-lg font-semibold hover:bg-denim-800 transition-colors">
-                        <i class="fas fa-cart-plus mr-2"></i>Tambah ke Keranjang
+                        <i class="fas fa-cart-plus mr-2"></i>Add to Cart
                     </button>
                     <button type="button" onclick="buyNow()" 
                        class="bg-denim-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-denim-600 transition-colors">
-                        <i class="fas fa-bolt mr-2"></i>Beli Langsung
+                        <i class="fas fa-bolt mr-2"></i>Buy Now
                     </button>
                 </div>
             </form>
             {% else %}
             <button disabled 
                     class="w-full bg-gray-300 text-gray-500 py-3 rounded-lg font-semibold cursor-not-allowed">
-                <i class="fas fa-times-circle mr-2"></i>Stok Habis
+                <i class="fas fa-times-circle mr-2"></i>Out of Stock
             </button>
             {% endif %}
 
             <!-- Product Details -->
             <div class="border-t pt-6">
-                <h3 class="font-semibold text-lg mb-4">Detail Produk</h3>
+                <h3 class="font-semibold text-lg mb-4">Product Details</h3>
                 <div class="space-y-3">
                     <div class="flex justify-between py-2 border-b">
-                        <span class="text-gray-600">Kategori</span>
-                        <span class="font-medium">{{ produk.get_kategori_display }}</span>
+                        <span class="text-gray-600">Category</span>
+                        <span class="font-medium">{% if produk.kategori == 'celana' %}Jeans{% elif produk.kategori == 'jaket' %}Jackets{% elif produk.kategori == 'kaos' %}T-Shirts{% else %}Accessories{% endif %}</span>
                     </div>
                     <div class="flex justify-between py-2 border-b">
-                        <span class="text-gray-600">Stok</span>
+                        <span class="text-gray-600">Stock</span>
                         <span class="font-medium">{{ produk.stok }} pcs</span>
                     </div>
                     <div class="flex justify-between py-2 border-b">
-                        <span class="text-gray-600">Berat</span>
-                        <span class="font-medium">~500 gr</span>
+                        <span class="text-gray-600">Weight</span>
+                        <span class="font-medium">~500g</span>
                     </div>
                     <div class="flex justify-between py-2">
                         <span class="text-gray-600">SKU</span>
@@ -249,7 +249,7 @@
             <div class="mt-6 p-4 bg-blue-50 rounded-lg">
                 <div class="flex items-center gap-2 text-blue-700">
                     <i class="fas fa-truck"></i>
-                    <span class="font-medium">Pengiriman 2-4 hari kerja</span>
+                    <span class="font-medium">Delivery 2-4 business days</span>
                 </div>
             </div>
         </div>
@@ -259,7 +259,7 @@
 <!-- Related Products -->
 {% if related_products %}
 <section class="mt-12">
-    <h2 class="text-2xl font-bold text-denim-900 mb-6">Produk Terkait</h2>
+    <h2 class="text-2xl font-bold text-denim-900 mb-6">Related Products</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {% for p in related_products %}
         <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden group">
@@ -287,14 +287,14 @@
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-lg font-bold text-denim-900">{{ p.get_harga_setelah_diskon|format_currency }}</span>
                     <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                        {{ p.get_kategori_display }}
+                        {% if p.kategori == 'celana' %}Celana{% elif p.kategori == 'jaket' %}Jaket{% elif p.kategori == 'kaos' %}Kaos{% else %}Aksesoris{% endif %}
                     </span>
                 </div>
                 
                 <div class="flex gap-2">
                     <a href="{% url 'detail' p.id %}" 
                        class="bg-denim-900 text-white py-2 px-4 rounded-lg hover:bg-denim-800 transition-colors text-center text-sm font-medium min-w-[80px]">
-                        <i class="fas fa-eye mr-1"></i>Detail
+                        <i class="fas fa-eye mr-1"></i>Details
                     </a>
                     {% if p.stok > 0 %}
                     <button data-product-id="{{ p.id }}" 
@@ -466,7 +466,7 @@ document.getElementById('add-to-cart-form').addEventListener('submit', function(
     })
     .catch(error => {
         hideLoading();
-        showNotification('Terjadi kesalahan, silakan coba lagi', 'error');
+        showNotification('An error occurred, please try again', 'error');
     });
 });
 
@@ -500,7 +500,7 @@ document.querySelectorAll('.add-to-cart-btn').forEach(button => {
         })
         .catch(error => {
             hideLoading();
-            showNotification('Terjadi kesalahan, silakan coba lagi', 'error');
+            showNotification('An error occurred, please try again', 'error');
         });
     });
 });
@@ -538,7 +538,7 @@ function buyNow() {
     })
     .catch(error => {
         hideLoading();
-        showNotification('Terjadi kesalahan, silakan coba lagi', 'error');
+        showNotification('An error occurred, please try again', 'error');
     });
 }
 

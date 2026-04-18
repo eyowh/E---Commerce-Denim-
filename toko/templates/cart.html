@@ -6,7 +6,7 @@
 <nav class="flex items-center gap-2 text-sm text-gray-600 mb-6">
     <a href="{% url 'home' %}" class="hover:text-denim-900">Home</a>
     <i class="fas fa-chevron-right text-xs"></i>
-    <span class="text-denim-900">Keranjang Belanja</span>
+    <span class="text-denim-900">Cart</span>
 </nav>
 
 {% if cart_items %}
@@ -16,7 +16,7 @@
         <div class="bg-white rounded-2xl shadow-lg p-6">
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-2xl font-bold text-denim-900">
-                    <i class="fas fa-shopping-cart mr-2"></i>Keranjang Belanja
+                    <i class="fas fa-shopping-cart mr-2"></i>Shopping Cart
                 </h1>
                 <span class="bg-denim-100 text-denim-800 px-3 py-1 rounded-full text-sm font-medium">
                     {{ cart_items|length }} Item
@@ -43,12 +43,12 @@
                         <!-- Product Info -->
                         <div class="md:col-span-4">
                             <h3 class="font-semibold text-lg text-denim-900 mb-1">{{ item.produk.nama }}</h3>
-                            <p class="text-sm text-gray-600 mb-2">{{ item.produk.get_kategori_display }}</p>
+                            <p class="text-sm text-gray-600 mb-2">{% if item.produk.kategori == 'celana' %}Jeans{% elif item.produk.kategori == 'jaket' %}Jackets{% elif item.produk.kategori == 'kaos' %}T-Shirts{% else %}Accessories{% endif %}</p>
                             <div class="flex items-center gap-2">
                                 <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">SKU: DENIM-{{ item.produk.id|stringformat:"06d" }}</span>
                                 {% if item.produk.stok <= 5 %}
                                     <span class="text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded">
-                                        <i class="fas fa-exclamation-triangle mr-1"></i>Tersisa {{ item.produk.stok }}
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>Only {{ item.produk.stok }} left
                                     </span>
                                 {% endif %}
                             </div>
@@ -86,16 +86,15 @@
                                     <i class="fas fa-plus text-xs text-gray-600"></i>
                                 </button>
                             </div>
-                            <p class="text-xs text-gray-500 text-center mt-2">Stok: {{ item.produk.stok }}</p>
+                            <p class="text-xs text-gray-500 text-center mt-2">Stock: {{ item.produk.stok }}</p>
                         </div>
 
                         <!-- Subtotal & Remove -->
                         <div class="md:col-span-2">
                             <div class="text-center">
-                                
                                 <button onclick="removeItem({{ item.produk.id }})" 
                                 class="text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1 rounded-lg transition-all duration-200 mt-2 text-xs font-medium">
-                                    Delete Item
+                                    Remove Item
                                 </button>
                             </div>
                         </div>
@@ -109,7 +108,7 @@
     <!-- Cart Summary -->
     <div class="lg:col-span-1">
         <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
-            <h3 class="font-semibold text-lg mb-6">Ringkasan Pesanan</h3>
+            <h3 class="font-semibold text-lg mb-6">Order Summary</h3>
             
             <!-- Order Summary -->
             <div class="space-y-3 mb-6">
@@ -118,23 +117,23 @@
                     <span class="font-medium">{{ total|format_currency }}</span>
                 </div>
                 <div class="flex justify-between items-center py-2 text-green-600">
-                    <span>Diskon</span>
+                    <span>Discount</span>
                     <span class="font-medium">-Rp 0</span>
                 </div>
                 <div class="border-t pt-3 flex justify-between items-center">
-                    <span class="text-lg font-bold">Total Pembayaran</span>
+                    <span class="text-lg font-bold">Total Payment</span>
                     <span class="text-xl font-bold text-denim-900">{{ total|format_currency }}</span>
                 </div>
             </div>
 
             <!-- Coupon Code -->
             <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Kode Promo</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Coupon Code</label>
                 <div class="flex gap-2">
-                    <input type="text" placeholder="Masukkan kode promo" 
+                    <input type="text" placeholder="Enter coupon code" 
                            class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-denim-500 text-sm">
                     <button class="bg-denim-900 text-white px-4 py-2 rounded-lg hover:bg-denim-800 transition-colors text-sm font-medium">
-                        Gunakan
+                        Apply
                     </button>
                 </div>
             </div>
@@ -147,7 +146,7 @@
                 </a>
                 <a href="{% url 'home' %}" 
                    class="w-full bg-gray-100 text-denim-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-center flex items-center justify-center">
-                    <i class="fas fa-arrow-left mr-2"></i>Lanjut Belanja
+                    <i class="fas fa-arrow-left mr-2"></i>Continue Shopping
                 </a>
             </div>
 
@@ -155,7 +154,7 @@
             <div class="mt-6 p-4 bg-green-50 rounded-lg">
                 <div class="flex items-center gap-2 text-green-700 text-sm">
                     <i class="fas fa-shield-alt"></i>
-                    <span>Pembayaran aman dan terenkripsi</span>
+                    <span>Secure payment and encryption</span>
                 </div>
             </div>
         </div>
@@ -169,11 +168,11 @@
         <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <i class="fas fa-shopping-cart text-4xl text-gray-400"></i>
         </div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-3">Keranjang Belanja Kosong</h3>
-        <p class="text-gray-600 mb-8">Belum ada produk yang ditambahkan ke keranjang. Mulai belanja sekarang!</p>
+        <h3 class="text-2xl font-bold text-gray-900 mb-3">Your Cart is Empty</h3>
+        <p class="text-gray-600 mb-8">You haven't added any products to your cart yet. Start shopping now!</p>
         <a href="{% url 'home' %}" 
            class="bg-denim-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-denim-800 transition-colors inline-flex items-center">
-            <i class="fas fa-shopping-bag mr-2"></i>Mulai Belanja
+            <i class="fas fa-shopping-bag mr-2"></i>Start Shopping
         </a>
     </div>
 </div>
@@ -184,7 +183,7 @@
 function updateQuantity(productId, action) {
     showLoading();
     
-    fetch('/update-cart/', {
+    fetch('{% url "update_cart" %}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -217,12 +216,12 @@ function updateQuantity(productId, action) {
     })
     .catch(error => {
         hideLoading();
-        showNotification('Terjadi kesalahan, silakan coba lagi', 'error');
+        showNotification('An error occurred, please try again', 'error');
     });
 }
 
 function removeItem(productId) {
-    if (confirm('Apakah Anda yakin ingin menghapus item ini?')) {
+    if (confirm('Are you sure you want to remove this item?')) {
         showLoading();
         
         fetch(`/remove-from-cart/${productId}/`, {
@@ -248,14 +247,14 @@ function removeItem(productId) {
                     }
                 }, 300);
                 
-                showNotification('Item berhasil dihapus dari keranjang', 'success');
+                showNotification('Item successfully removed from cart', 'success');
             } else {
-                showNotification('Gagal menghapus item', 'error');
+                showNotification('Failed to remove item', 'error');
             }
         })
         .catch(error => {
             hideLoading();
-            showNotification('Terjadi kesalahan, silakan coba lagi', 'error');
+            showNotification('An error occurred, please try again', 'error');
         });
     }
 }

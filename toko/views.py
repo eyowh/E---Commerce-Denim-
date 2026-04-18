@@ -373,10 +373,16 @@ def register_view(request):
 def profile_view(request):
     import time
     profile, created = Profile.objects.get_or_create(user=request.user)
+    
+    # Get cart count
+    cart_items, cart_total = get_cart(request)
+    cart_count = sum(item['jumlah'] for item in cart_items)
+    
     context = {
         'profile': profile,
         'is_new_profile': created or (not profile.phone_number and not profile.address),
-        'timestamp': int(time.time())
+        'timestamp': int(time.time()),
+        'cart_count': cart_count
     }
     return render(request, 'auth/profile.html', context)
 
@@ -406,10 +412,15 @@ def edit_profile_view(request):
         messages.success(request, 'Profil berhasil diperbarui!')
         return redirect('profile')
     
+    # Get cart count
+    cart_items, cart_total = get_cart(request)
+    cart_count = sum(item['jumlah'] for item in cart_items)
+    
     import time
     context = {
         'profile': profile,
-        'timestamp': int(time.time())
+        'timestamp': int(time.time()),
+        'cart_count': cart_count
     }
     return render(request, 'auth/edit_profile.html', context)
 

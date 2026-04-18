@@ -6,7 +6,7 @@
 <nav class="flex items-center gap-2 text-sm text-gray-600 mb-6">
     <a href="{% url 'home' %}" class="hover:text-denim-900">Home</a>
     <i class="fas fa-chevron-right text-xs"></i>
-    <a href="{% url 'cart' %}" class="hover:text-denim-900">Keranjang</a>
+    <a href="{% url 'cart' %}" class="hover:text-denim-900">Cart</a>
     <i class="fas fa-chevron-right text-xs"></i>
     <span class="text-denim-900">Checkout</span>
 </nav>
@@ -16,7 +16,7 @@
     <div class="lg:col-span-2">
         <div class="bg-white rounded-2xl shadow-lg p-6">
             <h1 class="text-2xl font-bold text-denim-900 mb-6">
-                <i class="fas fa-credit-card mr-2"></i>Informasi Pengiriman
+                <i class="fas fa-credit-card mr-2"></i>Shipping Information
             </h1>
 
             <form method="post" class="space-y-6">
@@ -24,11 +24,11 @@
 
                 <!-- Personal Information -->
                 <div>
-                    <h3 class="font-semibold text-lg mb-4">Data Pribadi</h3>
+                    <h3 class="font-semibold text-lg mb-4">Personal Information</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Nama Lengkap <span class="text-red-500">*</span>
+                                Full Name <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="nama_pembeli" required
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-denim-500 focus:border-transparent"
@@ -36,96 +36,59 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Nomor Telepon <span class="text-red-500">*</span>
+                                Phone Number <span class="text-red-500">*</span>
                             </label>
                             <input type="tel" name="no_telepon" required
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-denim-500 focus:border-transparent"
-                                   placeholder="0812-3456-7890">
+                                   placeholder="+1-234-567-8900">
                         </div>
                     </div>
                 </div>
 
                 <!-- Shipping Address -->
                 <div>
-                    <h3 class="font-semibold text-lg mb-4">Alamat Pengiriman</h3>
+                    <h3 class="font-semibold text-lg mb-4">Shipping Address</h3>
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Alamat Lengkap <span class="text-red-500">*</span>
+                                Complete Address <span class="text-red-500">*</span>
                             </label>
                             <textarea name="alamat" required rows="3"
                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-denim-500 focus:border-transparent"
-                                      placeholder="Jl. Sudirman No. 123, RT 01/RW 02, Kel. Karet Tengsin, Kec. Setiabudi, Jakarta Selatan"></textarea>
+                                      placeholder="123 Main Street, Apt 4B, New York, NY 10001"></textarea>
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Provinsi <span class="text-red-500">*</span>
+                                    State/Province <span class="text-red-500">*</span>
                                 </label>
                                 <select name="provinsi" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-denim-500 focus:border-transparent">
-                                    <option value="">Pilih Provinsi</option>
-                                    <!-- Sumatera -->
-                                    <option value="Aceh">Aceh</option>
-                                    <option value="Sumatera Utara">Sumatera Utara</option>
-                                    <option value="Sumatera Barat">Sumatera Barat</option>
-                                    <option value="Riau">Riau</option>
-                                    <option value="Kepulauan Riau">Kepulauan Riau</option>
-                                    <option value="Jambi">Jambi</option>
-                                    <option value="Bengkulu">Bengkulu</option>
-                                    <option value="Sumatera Selatan">Sumatera Selatan</option>
-                                    <option value="Lampung">Lampung</option>
-                                    <option value="Bangka Belitung">Bangka Belitung</option>
-                                    <!-- Jawa -->
-                                    <option value="DKI Jakarta">DKI Jakarta</option>
-                                    <option value="Jawa Barat">Jawa Barat</option>
-                                    <option value="Banten">Banten</option>
-                                    <option value="Jawa Tengah">Jawa Tengah</option>
-                                    <option value="DI Yogyakarta">DI Yogyakarta</option>
-                                    <option value="Jawa Timur">Jawa Timur</option>
-                                    <!-- Bali & Nusa Tenggara -->
-                                    <option value="Bali">Bali</option>
-                                    <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
-                                    <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
-                                    <!-- Kalimantan -->
-                                    <option value="Kalimantan Barat">Kalimantan Barat</option>
-                                    <option value="Kalimantan Tengah">Kalimantan Tengah</option>
-                                    <option value="Kalimantan Selatan">Kalimantan Selatan</option>
-                                    <option value="Kalimantan Timur">Kalimantan Timur</option>
-                                    <option value="Kalimantan Utara">Kalimantan Utara</option>
-                                    <!-- Sulawesi -->
-                                    <option value="Sulawesi Utara">Sulawesi Utara</option>
-                                    <option value="Gorontalo">Gorontalo</option>
-                                    <option value="Sulawesi Tengah">Sulawesi Tengah</option>
-                                    <option value="Sulawesi Barat">Sulawesi Barat</option>
-                                    <option value="Sulawesi Selatan">Sulawesi Selatan</option>
-                                    <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
-                                    <!-- Maluku & Papua -->
-                                    <option value="Maluku">Maluku</option>
-                                    <option value="Maluku Utara">Maluku Utara</option>
-                                    <option value="Papua">Papua</option>
-                                    <option value="Papua Barat">Papua Barat</option>
-                                    <option value="Papua Selatan">Papua Selatan</option>
-                                    <option value="Papua Tengah">Papua Tengah</option>
-                                    <option value="Papua Pegunungan">Papua Pegunungan</option>
+                                    <option value="">Select State</option>
+                                    <option value="California">California</option>
+                                    <option value="New York">New York</option>
+                                    <option value="Texas">Texas</option>
+                                    <option value="Florida">Florida</option>
+                                    <option value="Illinois">Illinois</option>
+                                    <option value="Other">Other</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Kota <span class="text-red-500">*</span>
+                                    City <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="kota" required
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-denim-500 focus:border-transparent"
-                                       placeholder="Jakarta">
+                                       placeholder="New York">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Kode Pos <span class="text-red-500">*</span>
+                                    ZIP Code <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="kode_pos" required
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-denim-500 focus:border-transparent"
-                                       placeholder="12345">
+                                       placeholder="10001">
                             </div>
                         </div>
                     </div>
@@ -133,43 +96,43 @@
 
                 <!-- Shipping Method -->
                 <div>
-                    <h3 class="font-semibold text-lg mb-4">Metode Pengiriman</h3>
+                    <h3 class="font-semibold text-lg mb-4">Shipping Method</h3>
                     <div class="space-y-3">
                         <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-denim-50">
                             <input type="radio" name="pengiriman" value="regular" checked class="mr-3">
                             <div class="flex-1">
-                                <div class="font-medium">Reguler</div>
-                                <div class="text-sm text-gray-600">2-4 hari kerja</div>
+                                <div class="font-medium">Regular (7-14 days)</div>
+                                <div class="text-sm text-gray-600">$15.00</div>
                             </div>
-                            <span class="font-semibold">Rp 15.000</span>
+                            <span class="font-semibold">$15.00</span>
                         </label>
                         <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-denim-50">
                             <input type="radio" name="pengiriman" value="express" class="mr-3">
                             <div class="flex-1">
-                                <div class="font-medium">Express</div>
-                                <div class="text-sm text-gray-600">1-2 hari kerja</div>
+                                <div class="font-medium">Express (3-7 days)</div>
+                                <div class="text-sm text-gray-600">$30.00</div>
                             </div>
-                            <span class="font-semibold">Rp 30.000</span>
+                            <span class="font-semibold">$30.00</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Payment Method -->
                 <div>
-                    <h3 class="font-semibold text-lg mb-4">Metode Pembayaran</h3>
+                    <h3 class="font-semibold text-lg mb-4">Payment Method</h3>
                     <div class="space-y-3">
                         <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-denim-50">
                             <input type="radio" name="pembayaran" value="qris" checked class="mr-3">
                             <div class="flex-1">
                                 <div class="font-medium">QRIS</div>
-                                <div class="text-sm text-gray-600">Pembayaran dengan QR Code</div>
+                                <div class="text-sm text-gray-600">Payment with QR Code</div>
                             </div>
                             <i class="fas fa-qrcode text-2xl text-denim-600"></i>
                         </label>
                         <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-denim-50">
                             <input type="radio" name="pembayaran" value="transfer" class="mr-3">
                             <div class="flex-1">
-                                <div class="font-medium">Transfer Bank</div>
+                                <div class="font-medium">Bank Transfer</div>
                                 <div class="text-sm text-gray-600">BCA, Mandiri, BNI</div>
                             </div>
                             <i class="fas fa-university text-2xl text-denim-600"></i>
@@ -180,22 +143,22 @@
                 <!-- Notes -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Catatan (Opsional)
+                        Notes (Optional)
                     </label>
                     <textarea name="catatan" rows="2"
                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-denim-500 focus:border-transparent"
-                              placeholder="Tulis catatan untuk pesanan Anda..."></textarea>
+                              placeholder="Write a note for your order..."></textarea>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="flex gap-4">
                     <a href="{% url 'cart' %}" 
                        class="bg-gray-200 text-denim-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-center">
-                        <i class="fas fa-arrow-left mr-2"></i>Kembali ke Keranjang
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Cart
                     </a>
                     <button type="submit" 
                             class="flex-1 bg-denim-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-denim-800 transition-colors">
-                        <i class="fas fa-check mr-2"></i>Buat Pesanan
+                        <i class="fas fa-lock mr-2"></i>Process Checkout
                     </button>
                 </div>
             </form>
@@ -205,7 +168,7 @@
     <!-- Order Summary -->
     <div class="lg:col-span-1">
         <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
-            <h3 class="font-semibold text-lg mb-4">Ringkasan Pesanan</h3>
+            <h3 class="font-semibold text-lg mb-4">Order Summary</h3>
             
             <!-- Cart Items Summary -->
             <div class="space-y-3 mb-4">
@@ -234,15 +197,15 @@
                     <span>{{ total|format_currency }}</span>
                 </div>
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Ongkos Kirim</span>
-                    <span>Rp 15.000</span>
+                    <span class="text-gray-600">Shipping</span>
+                    <span>$15.00</span>
                 </div>
                 <div class="flex justify-between text-green-600 text-sm">
-                    <span>Diskon</span>
-                    <span>-Rp 0</span>
+                    <span>Discount</span>
+                    <span>- $0.00</span>
                 </div>
                 <div class="border-t pt-2 flex justify-between text-lg font-bold">
-                    <span>Total Pembayaran</span>
+                    <span>Total Payment</span>
                     <span class="text-denim-900">{{ total|add:15000|format_currency }}</span>
                 </div>
             </div>
@@ -251,7 +214,7 @@
             <div class="mt-6 p-4 bg-green-50 rounded-lg">
                 <div class="flex items-center gap-2 text-green-700 text-sm">
                     <i class="fas fa-shield-alt"></i>
-                    <span>Pembayaran aman dan terenkripsi</span>
+                    <span>Secure and encrypted payment</span>
                 </div>
             </div>
         </div>
